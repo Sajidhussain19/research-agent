@@ -2,14 +2,14 @@
 
 import os
 import asyncio
-from tavily import AsyncTavilyClient
+from tavily import TavilyClient
 from dotenv import load_dotenv
 from agent.memory import save_to_cache, load_from_cache
 import time
 
 load_dotenv()
 
-client = AsyncTavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 
 async def search_web_async(query: str) -> tuple[str, list[dict]]:
@@ -20,7 +20,8 @@ async def search_web_async(query: str) -> tuple[str, list[dict]]:
 
     try:
         print(f"  🔍 Searching: {query[:45]}")
-        response = await client.search(
+
+        response = client.search(
             query=query,
             max_results=5,
             search_depth="basic"
@@ -43,8 +44,7 @@ async def search_web_async(query: str) -> tuple[str, list[dict]]:
 
 
 async def search_all_async(queries: list[str]) -> dict:
-    """Pure async — used by FastAPI"""
-    start   = time.time()
+    start = time.time()
     results = await asyncio.gather(
         *[search_web_async(q) for q in queries]
     )
@@ -54,5 +54,4 @@ async def search_all_async(queries: list[str]) -> dict:
 
 
 def search_all(queries: list[str]) -> dict:
-    """Sync wrapper — used by main.py only"""
     return asyncio.run(search_all_async(queries))
