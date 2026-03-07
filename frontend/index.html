@@ -1,1060 +1,895 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Research Agent</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-    <style>
-        :root {
-            --bg: #080b0f;
-            --surface: #0e1318;
-            --border: #1e2730;
-            --accent: #00e5ff;
-            --green: #00ff88;
-            --yellow: #ffd166;
-            --red: #ff4d6d;
-            --text: #dce8f0;
-            --muted: #4a6070;
-            --font-heading: 'Syne', sans-serif;
-            --font-mono: 'Space Mono', monospace;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: var(--font-mono);
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 60px 24px 80px;
-        }
-
-        .header {
-            margin-bottom: 40px;
-        }
-
-        .header-tag {
-            font-size: 0.72rem;
-            color: var(--accent);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-tag::before {
-            content: '';
-            display: inline-block;
-            width: 24px;
-            height: 1px;
-            background: var(--accent);
-        }
-
-        h1 {
-            font-family: var(--font-heading);
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            font-weight: 800;
-            line-height: 1.1;
-            color: #fff;
-            margin-bottom: 12px;
-        }
-
-        h1 span {
-            color: var(--accent);
-        }
-
-        .subtitle {
-            font-size: 0.82rem;
-            color: var(--muted);
-            letter-spacing: 0.05em;
-        }
-
-        /* ── Tabs ── */
-        .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 36px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tab {
-            padding: 10px 24px;
-            font-size: 0.78rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--muted);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            background: none;
-            border-top: none;
-            border-left: none;
-            border-right: none;
-            font-family: var(--font-mono);
-        }
-
-        .tab:hover {
-            color: var(--text);
-        }
-
-        .tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-
-        /* ── Search ── */
-        .search-wrap {
-            display: flex;
-            margin-bottom: 36px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
-
-        .search-wrap:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.08);
-        }
-
-        input {
-            flex: 1;
-            padding: 16px 20px;
-            background: var(--surface);
-            color: var(--text);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            border: none;
-            outline: none;
-        }
-
-        input::placeholder {
-            color: var(--muted);
-        }
-
-        button.run-btn {
-            padding: 16px 28px;
-            background: var(--accent);
-            color: #000;
-            font-family: var(--font-heading);
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            letter-spacing: 0.05em;
-            transition: opacity 0.15s, background 0.15s;
-            white-space: nowrap;
-        }
-
-        button.run-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        button.run-btn:hover:not(:disabled) {
-            background: #33ecff;
-        }
-
-        /* ── Phases ── */
-        .phases {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .phase {
-            font-size: 0.72rem;
-            letter-spacing: 0.08em;
-            padding: 5px 12px;
-            border-radius: 3px;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            background: var(--surface);
-            transition: all 0.3s;
-        }
-
-        .phase.active {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(0, 229, 255, 0.06);
-            animation: pulse 1.2s ease-in-out infinite;
-        }
-
-        .phase.done {
-            border-color: var(--green);
-            color: var(--green);
-            background: rgba(0, 255, 136, 0.06);
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        /* ── Cards ── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 28px;
-            margin-bottom: 20px;
-            animation: fadeUp 0.4s ease both;
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-label {
-            font-size: 0.68rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* ── Company grid ── */
-        .company-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 12px;
-        }
-
-        .company-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            padding: 18px;
-            transition: border-color 0.2s, transform 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .company-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .company-name {
-            font-family: var(--font-heading);
-            font-weight: 600;
-            font-size: 1rem;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .company-focus {
-            font-size: 0.78rem;
-            color: var(--muted);
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        .company-fact {
-            font-size: 0.75rem;
-            color: var(--green);
-            line-height: 1.5;
-            margin-bottom: 12px;
-            flex: 1;
-        }
-
-        .evidence {
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .confidence {
-            font-size: 0.62rem;
-            padding: 2px 7px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .confidence-high {
-            background: rgba(0, 255, 136, 0.15);
-            color: var(--green);
-        }
-
-        .confidence-medium {
-            background: rgba(255, 209, 102, 0.15);
-            color: var(--yellow);
-        }
-
-        .confidence-low {
-            background: rgba(255, 77, 109, 0.15);
-            color: var(--red);
-        }
-
-        .source-link {
-            font-size: 0.70rem;
-            color: var(--accent);
-            text-decoration: none;
-            opacity: 0.75;
-            transition: opacity 0.2s;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 190px;
-        }
-
-        .source-link:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-
-        .fact-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .fact-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--text);
-            line-height: 1.6;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .fact-list li:last-child {
-            border: none;
-        }
-
-        .fact-arrow {
-            color: var(--accent);
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .fact-body {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .fact-source {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .report-content {
-            white-space: pre-wrap;
-            font-size: 0.83rem;
-            line-height: 1.9;
-            color: #bcd0dc;
-            font-family: var(--font-mono);
-        }
-
-        .cache-row {
-            margin-bottom: 20px;
-        }
-
-        .cache-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            font-size: 0.72rem;
-            color: var(--muted);
-            letter-spacing: 0.05em;
-        }
-
-        .searches {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .search-tag {
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            background: rgba(0, 229, 255, 0.06);
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            border-radius: 3px;
-            color: var(--accent);
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(0, 0, 0, 0.3);
-            border-top-color: #000;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .error-box {
-            padding: 16px 20px;
-            background: rgba(255, 77, 109, 0.08);
-            border: 1px solid var(--red);
-            border-radius: 5px;
-            color: var(--red);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-
-        .done-banner {
-            padding: 16px 20px;
-            background: rgba(0, 255, 136, 0.06);
-            border: 1px solid var(--green);
-            border-radius: 5px;
-            color: var(--green);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            letter-spacing: 0.05em;
-        }
-
-        .memory-banner {
-            padding: 10px 16px;
-            background: rgba(255, 209, 102, 0.08);
-            border: 1px solid var(--yellow);
-            border-radius: 5px;
-            color: var(--yellow);
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-        }
-
-        /* ── Observability Dashboard ── */
-        .obs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .obs-stat {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .obs-stat-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        .obs-stat-value {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
-        }
-
-        .obs-stat-sub {
-            font-size: 0.72rem;
-            color: var(--muted);
-        }
-
-        /* ── Timing bars ── */
-        .timing-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .timing-label {
-            font-size: 0.75rem;
-            color: var(--muted);
-            width: 70px;
-            flex-shrink: 0;
-        }
-
-        .timing-bar-wrap {
-            flex: 1;
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .timing-bar {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.6s ease;
-        }
-
-        .timing-value {
-            font-size: 0.75rem;
-            color: var(--text);
-            width: 45px;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        /* ── Memory topics table ── */
-        .topic-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.82rem;
-        }
-
-        .topic-row:last-child {
-            border: none;
-        }
-
-        .topic-name {
-            flex: 1;
-            color: var(--text);
-        }
-
-        .topic-badge {
-            font-size: 0.68rem;
-            padding: 2px 8px;
-            border-radius: 3px;
-            background: rgba(0, 229, 255, 0.08);
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            color: var(--accent);
-        }
-
-        .topic-runs {
-            font-size: 0.70rem;
-            color: var(--muted);
-            width: 50px;
-            text-align: right;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--muted);
-            font-size: 0.85rem;
-            line-height: 2;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Research Agent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    :root {
+      --bg:       #080b0f;
+      --surface:  #0e1318;
+      --border:   #1e2730;
+      --accent:   #00e5ff;
+      --green:    #00ff88;
+      --yellow:   #ffd166;
+      --red:      #ff4d6d;
+      --text:     #dce8f0;
+      --muted:    #4a6070;
+      --font-heading: 'Syne', sans-serif;
+      --font-mono:    'Space Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-mono);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .header { margin-bottom: 40px; }
+
+    .header-tag {
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      padding: 10px 24px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font-mono);
+    }
+
+    .tab:hover { color: var(--text); }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      display: flex;
+      margin-bottom: 36px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,229,255,0.08);
+    }
+
+    input {
+      flex: 1;
+      padding: 16px 20px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      border: none;
+      outline: none;
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    button.run-btn {
+      padding: 16px 28px;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: opacity 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+
+    button.run-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    button.run-btn:hover:not(:disabled) { background: #33ecff; }
+
+    /* ── Phases ── */
+    .phases {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .phase {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface);
+      transition: all 0.3s;
+    }
+
+    .phase.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,229,255,0.06);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .phase.done {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(0,255,136,0.06);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.6; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-label::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--border);
+    }
+
+    /* ── Company grid ── */
+    .company-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .company-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 18px;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .company-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .company-name { font-family: var(--font-heading); font-weight: 600; font-size: 1rem; color: #fff; margin-bottom: 6px; }
+    .company-focus { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+    .company-fact  { font-size: 0.75rem; color: var(--green); line-height: 1.5; margin-bottom: 12px; flex: 1; }
+
+    .evidence {
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+
+    .confidence {
+      font-size: 0.62rem; padding: 2px 7px; border-radius: 3px;
+      text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; flex-shrink: 0;
+    }
+
+    .confidence-high   { background: rgba(0,255,136,0.15);  color: var(--green);  }
+    .confidence-medium { background: rgba(255,209,102,0.15); color: var(--yellow); }
+    .confidence-low    { background: rgba(255,77,109,0.15);  color: var(--red);    }
+
+    .source-link {
+      font-size: 0.70rem; color: var(--accent); text-decoration: none;
+      opacity: 0.75; transition: opacity 0.2s;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;
+    }
+    .source-link:hover { opacity: 1; text-decoration: underline; }
+
+    .fact-list { list-style: none; display: flex; flex-direction: column; }
+    .fact-list li {
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.85rem; color: var(--text); line-height: 1.6;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .fact-list li:last-child { border: none; }
+    .fact-arrow { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .fact-body  { display: flex; flex-direction: column; gap: 5px; }
+    .fact-source { display: flex; align-items: center; gap: 6px; }
+
+    .report-content {
+      white-space: pre-wrap; font-size: 0.83rem; line-height: 1.9;
+      color: #bcd0dc; font-family: var(--font-mono);
+    }
+
+    .cache-row { margin-bottom: 20px; }
+    .cache-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 3px;
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em;
+    }
+
+    .searches { display: flex; flex-wrap: wrap; gap: 8px; }
+    .search-tag {
+      font-size: 0.75rem; padding: 4px 12px;
+      background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 3px; color: var(--accent);
+    }
+
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-box {
+      padding: 16px 20px; background: rgba(255,77,109,0.08);
+      border: 1px solid var(--red); border-radius: 5px;
+      color: var(--red); font-size: 0.85rem; margin-bottom: 20px;
+    }
+
+    .done-banner {
+      padding: 16px 20px; background: rgba(0,255,136,0.06);
+      border: 1px solid var(--green); border-radius: 5px;
+      color: var(--green); font-size: 0.85rem; margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .memory-banner {
+      padding: 10px 16px; background: rgba(255,209,102,0.08);
+      border: 1px solid var(--yellow); border-radius: 5px;
+      color: var(--yellow); font-size: 0.8rem; margin-bottom: 20px;
+    }
+
+    /* ── Observability Dashboard ── */
+    .obs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .obs-stat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .obs-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .obs-stat-value {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .obs-stat-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── Timing bars ── */
+    .timing-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .timing-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .timing-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .timing-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .timing-value {
+      font-size: 0.75rem;
+      color: var(--text);
+      width: 45px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Memory topics table ── */
+    .topic-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+
+    .topic-row:last-child { border: none; }
+
+    .topic-name { flex: 1; color: var(--text); }
+
+    .topic-badge {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+      color: var(--accent);
+    }
+
+    .topic-runs {
+      font-size: 0.70rem;
+      color: var(--muted);
+      width: 50px;
+      text-align: right;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 2;
+    }
+  </style>
 </head>
-
 <body>
-    <div id="root"></div>
+<div id="root"></div>
 
-    <script type="text/babel">
-        const { useState } = React;
+<script type="text/babel">
+const { useState } = React;
 
-        const PHASES = [
-            { id: 1, label: "01 PLAN" },
-            { id: 2, label: "02 SEARCH" },
-            { id: 3, label: "03 EXTRACT" },
-            { id: 4, label: "04 CACHE" },
-            { id: 5, label: "05 REPORT" },
-        ];
+const PHASES = [
+  { id: 1, label: "01 PLAN"    },
+  { id: 2, label: "02 SEARCH"  },
+  { id: 3, label: "03 EXTRACT" },
+  { id: 4, label: "04 CACHE"   },
+  { id: 5, label: "05 REPORT"  },
+];
 
-        const API_BASE = "http://localhost:8080";
+const API_BASE = "https://research-agent-heod.onrender.com";
 
-        function Evidence({ ev }) {
-            if (!ev) return null;
-            const conf = ev.confidence || "medium";
-            const title = ev.source_title || ev.source_url || "";
-            return (
-                <div className="evidence">
-                    <span className={`confidence confidence-${conf}`}>{conf}</span>
-                    {ev.source_url
-                        ? <a className="source-link" href={ev.source_url} target="_blank" rel="noreferrer" title={title}>
-                            ↗ {title.slice(0, 38)}{title.length > 38 ? "…" : ""}
-                        </a>
-                        : title
-                            ? <span className="source-link" style={{ cursor: "default" }}>{title.slice(0, 40)}</span>
-                            : null
-                    }
-                </div>
-            );
-        }
+function Evidence({ ev }) {
+  if (!ev) return null;
+  const conf  = ev.confidence || "medium";
+  const title = ev.source_title || ev.source_url || "";
+  return (
+    <div className="evidence">
+      <span className={`confidence confidence-${conf}`}>{conf}</span>
+      {ev.source_url
+        ? <a className="source-link" href={ev.source_url} target="_blank" rel="noreferrer" title={title}>
+            ↗ {title.slice(0,38)}{title.length > 38 ? "…" : ""}
+          </a>
+        : title
+          ? <span className="source-link" style={{cursor:"default"}}>{title.slice(0,40)}</span>
+          : null
+      }
+    </div>
+  );
+}
 
-        /* ── Timing bar component ── */
-        function TimingBar({ label, value, max }) {
-            const pct = max > 0 ? Math.round((value / max) * 100) : 0;
-            return (
-                <div className="timing-row">
-                    <span className="timing-label">{label}</span>
-                    <div className="timing-bar-wrap">
-                        <div className="timing-bar" style={{ width: `${pct}%` }} />
-                    </div>
-                    <span className="timing-value">{value}s</span>
-                </div>
-            );
-        }
+/* ── Timing bar component ── */
+function TimingBar({ label, value, max }) {
+  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
+  return (
+    <div className="timing-row">
+      <span className="timing-label">{label}</span>
+      <div className="timing-bar-wrap">
+        <div className="timing-bar" style={{ width: `${pct}%` }} />
+      </div>
+      <span className="timing-value">{value}s</span>
+    </div>
+  );
+}
 
-        /* ── Observability Dashboard ── */
-        function Dashboard({ runData }) {
-            if (!runData) {
-                return (
-                    <div className="empty-state">
-                        No run data yet.<br />
-                        Run a research query first,<br />
-                        then come back here to see the stats.
-                    </div>
+/* ── Observability Dashboard ── */
+function Dashboard({ runData }) {
+  if (!runData) {
+    return (
+      <div className="empty-state">
+        No run data yet.<br/>
+        Run a research query first,<br/>
+        then come back here to see the stats.
+      </div>
+    );
+  }
+
+  const { timings, total_time, total_searches, estimated_cost, memory_topics } = runData;
+  const maxTiming = Math.max(...Object.values(timings || {}), 0.1);
+
+  return (
+    <div>
+      {/* Summary stats */}
+      <div className="card">
+        <div className="card-label">Run Summary</div>
+        <div className="obs-grid">
+          <div className="obs-stat">
+            <span className="obs-stat-label">Total Time</span>
+            <span className="obs-stat-value">{total_time}s</span>
+            <span className="obs-stat-sub">end to end</span>
+          </div>
+          <div className="obs-stat">
+            <span className="obs-stat-label">Searches</span>
+            <span className="obs-stat-value">{total_searches}</span>
+            <span className="obs-stat-sub">async parallel</span>
+          </div>
+          <div className="obs-stat">
+            <span className="obs-stat-label">Est. Cost</span>
+            <span className="obs-stat-value" style={{fontSize:"1.4rem"}}>${estimated_cost}</span>
+            <span className="obs-stat-sub">gpt-4o-mini</span>
+          </div>
+          <div className="obs-stat">
+            <span className="obs-stat-label">Memory Topics</span>
+            <span className="obs-stat-value">{(memory_topics || []).length}</span>
+            <span className="obs-stat-sub">topics known</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Phase timings */}
+      {timings && Object.keys(timings).length > 0 && (
+        <div className="card">
+          <div className="card-label">Phase Timings</div>
+          {Object.entries(timings).map(([phase, val]) => (
+            <TimingBar key={phase} label={phase} value={val} max={maxTiming} />
+          ))}
+          <div style={{marginTop:16, fontSize:"0.72rem", color:"var(--muted)"}}>
+            Longest phase → {Object.entries(timings).sort((a,b) => b[1]-a[1])[0]?.[0]}
+            &nbsp;({Math.max(...Object.values(timings))}s)
+          </div>
+        </div>
+      )}
+
+      {/* Memory knowledge base */}
+      <div className="card">
+        <div className="card-label">Agent Knowledge Base</div>
+        {(memory_topics || []).length === 0 ? (
+          <div style={{color:"var(--muted)", fontSize:"0.85rem"}}>No topics in memory yet.</div>
+        ) : (
+          (memory_topics || []).map((t, i) => (
+            <div key={i} className="topic-row">
+              <span className="topic-name">{t.topic?.slice(0, 55)}</span>
+              <span className="topic-badge">{t.companies} companies</span>
+              <span className="topic-runs">{t.access_count}× runs</span>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Cost breakdown */}
+      <div className="card">
+        <div className="card-label">Cost Breakdown</div>
+        <div style={{fontSize:"0.82rem", lineHeight:2, color:"var(--muted)"}}>
+          <div style={{display:"flex", justifyContent:"space-between"}}>
+            <span>Planner (input ~200 tokens)</span>
+            <span style={{color:"var(--text)"}}>~$0.00003</span>
+          </div>
+          <div style={{display:"flex", justifyContent:"space-between"}}>
+            <span>Extractor (input ~600 tokens)</span>
+            <span style={{color:"var(--text)"}}>~$0.00009</span>
+          </div>
+          <div style={{display:"flex", justifyContent:"space-between"}}>
+            <span>Reporter (output ~2000 tokens)</span>
+            <span style={{color:"var(--text)"}}>~$0.00120</span>
+          </div>
+          <div style={{display:"flex", justifyContent:"space-between", borderTop:"1px solid var(--border)", paddingTop:8, marginTop:4}}>
+            <span style={{color:"var(--text)"}}>Total per run</span>
+            <span style={{color:"var(--green)", fontWeight:"bold"}}>${estimated_cost}</span>
+          </div>
+          <div style={{marginTop:8, color:"var(--accent)"}}>
+            With $4.83 balance → ~{Math.floor(4.83 / (estimated_cost || 0.003))} runs remaining
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [activeTab,   setActiveTab]   = useState("research");
+  const [query,       setQuery]       = useState("");
+  const [loading,     setLoading]     = useState(false);
+  const [activePhase, setActivePhase] = useState(0);
+  const [donePhases,  setDonePhases]  = useState([]);
+  const [plan,        setPlan]        = useState(null);
+  const [companies,   setCompanies]   = useState([]);
+  const [marketFacts, setMarketFacts] = useState([]);
+  const [challenges,  setChallenges]  = useState([]);
+  const [report,      setReport]      = useState("");
+  const [cacheStats,  setCacheStats]  = useState(null);
+  const [error,       setError]       = useState("");
+  const [isDone,      setIsDone]      = useState(false);
+  const [memoryHit,   setMemoryHit]   = useState(null);
+  const [runData,     setRunData]     = useState(null);  // observability data
+
+  function reset() {
+    setActivePhase(0); setDonePhases([]);
+    setPlan(null);     setCompanies([]);
+    setMarketFacts([]); setChallenges([]);
+    setReport("");     setCacheStats(null);
+    setError("");      setIsDone(false);
+    setMemoryHit(null);
+  }
+
+  async function runResearch() {
+    if (!query.trim() || loading) return;
+    reset();
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/research/stream`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ query: query.trim() })
+      });
+
+      if (!res.ok) {
+        setError(`Server error: ${res.status} ${res.statusText}`);
+        setLoading(false);
+        return;
+      }
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop();
+
+        for (const part of parts) {
+          const line = part.trim();
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const { event, data } = JSON.parse(line.slice(6));
+            console.log("[SSE]", event, data);
+
+            switch (event) {
+              case "phase":
+                setActivePhase(data.phase);
+                setDonePhases(prev =>
+                  [...new Set([...prev, data.phase - 1])].filter(x => x > 0)
                 );
+                break;
+              case "plan":        setPlan(data);                              break;
+              case "facts":
+                setCompanies(data.companies    || []);
+                setMarketFacts(data.market_facts || []);
+                setChallenges(data.challenges   || []);
+                break;
+              case "cache":       setCacheStats(data);                        break;
+              case "report":      setReport(data.content || "");              break;
+              case "memory_hit":
+              case "memory_merged":
+                setMemoryHit(data);
+                break;
+              case "done":
+                setDonePhases([1,2,3,4,5]);
+                setActivePhase(0);
+                setIsDone(true);
+                setRunData(data);   // save observability data
+                break;
+              case "error":       setError(data.message);                     break;
             }
-
-            const { timings, total_time, total_searches, estimated_cost, memory_topics } = runData;
-            const maxTiming = Math.max(...Object.values(timings || {}), 0.1);
-
-            return (
-                <div>
-                    {/* Summary stats */}
-                    <div className="card">
-                        <div className="card-label">Run Summary</div>
-                        <div className="obs-grid">
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Total Time</span>
-                                <span className="obs-stat-value">{total_time}s</span>
-                                <span className="obs-stat-sub">end to end</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Searches</span>
-                                <span className="obs-stat-value">{total_searches}</span>
-                                <span className="obs-stat-sub">async parallel</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Est. Cost</span>
-                                <span className="obs-stat-value" style={{ fontSize: "1.4rem" }}>${estimated_cost}</span>
-                                <span className="obs-stat-sub">gpt-4o-mini</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Memory Topics</span>
-                                <span className="obs-stat-value">{(memory_topics || []).length}</span>
-                                <span className="obs-stat-sub">topics known</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Phase timings */}
-                    {timings && Object.keys(timings).length > 0 && (
-                        <div className="card">
-                            <div className="card-label">Phase Timings</div>
-                            {Object.entries(timings).map(([phase, val]) => (
-                                <TimingBar key={phase} label={phase} value={val} max={maxTiming} />
-                            ))}
-                            <div style={{ marginTop: 16, fontSize: "0.72rem", color: "var(--muted)" }}>
-                                Longest phase → {Object.entries(timings).sort((a, b) => b[1] - a[1])[0]?.[0]}
-                                &nbsp;({Math.max(...Object.values(timings))}s)
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Memory knowledge base */}
-                    <div className="card">
-                        <div className="card-label">Agent Knowledge Base</div>
-                        {(memory_topics || []).length === 0 ? (
-                            <div style={{ color: "var(--muted)", fontSize: "0.85rem" }}>No topics in memory yet.</div>
-                        ) : (
-                            (memory_topics || []).map((t, i) => (
-                                <div key={i} className="topic-row">
-                                    <span className="topic-name">{t.topic?.slice(0, 55)}</span>
-                                    <span className="topic-badge">{t.companies} companies</span>
-                                    <span className="topic-runs">{t.access_count}× runs</span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    {/* Cost breakdown */}
-                    <div className="card">
-                        <div className="card-label">Cost Breakdown</div>
-                        <div style={{ fontSize: "0.82rem", lineHeight: 2, color: "var(--muted)" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Planner (input ~200 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00003</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Extractor (input ~600 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00009</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Reporter (output ~2000 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00120</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--border)", paddingTop: 8, marginTop: 4 }}>
-                                <span style={{ color: "var(--text)" }}>Total per run</span>
-                                <span style={{ color: "var(--green)", fontWeight: "bold" }}>${estimated_cost}</span>
-                            </div>
-                            <div style={{ marginTop: 8, color: "var(--accent)" }}>
-                                With $4.83 balance → ~{Math.floor(4.83 / (estimated_cost || 0.003))} runs remaining
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
+          } catch (e) {
+            console.warn("[SSE parse error]", e, part);
+          }
         }
+      }
+    } catch (e) {
+      setError(`Could not connect to backend at ${API_BASE}. Is uvicorn running?`);
+    }
 
-        function App() {
-            const [activeTab, setActiveTab] = useState("research");
-            const [query, setQuery] = useState("");
-            const [loading, setLoading] = useState(false);
-            const [activePhase, setActivePhase] = useState(0);
-            const [donePhases, setDonePhases] = useState([]);
-            const [plan, setPlan] = useState(null);
-            const [companies, setCompanies] = useState([]);
-            const [marketFacts, setMarketFacts] = useState([]);
-            const [challenges, setChallenges] = useState([]);
-            const [report, setReport] = useState("");
-            const [cacheStats, setCacheStats] = useState(null);
-            const [error, setError] = useState("");
-            const [isDone, setIsDone] = useState(false);
-            const [memoryHit, setMemoryHit] = useState(null);
-            const [runData, setRunData] = useState(null);  // observability data
+    setLoading(false);
+  }
 
-            function reset() {
-                setActivePhase(0); setDonePhases([]);
-                setPlan(null); setCompanies([]);
-                setMarketFacts([]); setChallenges([]);
-                setReport(""); setCacheStats(null);
-                setError(""); setIsDone(false);
-                setMemoryHit(null);
-            }
+  const showProgress = loading || donePhases.length > 0;
 
-            async function runResearch() {
-                if (!query.trim() || loading) return;
-                reset();
-                setLoading(true);
+  return (
+    <div className="container">
 
-                try {
-                    const res = await fetch(`${API_BASE}/research/stream`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ query: query.trim() })
-                    });
+      {/* Header */}
+      <div className="header">
+        <div className="header-tag">AI Research Agent</div>
+        <h1>Research<br/><span>anything.</span></h1>
+        <p className="subtitle">Powered by OpenAI + Tavily · Built by you</p>
+      </div>
 
-                    if (!res.ok) {
-                        setError(`Server error: ${res.status} ${res.statusText}`);
-                        setLoading(false);
-                        return;
-                    }
+      {/* Tabs */}
+      <div className="tabs">
+        <button className={`tab ${activeTab === "research" ? "active" : ""}`}
+                onClick={() => setActiveTab("research")}>
+          Research
+        </button>
+        <button className={`tab ${activeTab === "dashboard" ? "active" : ""}`}
+                onClick={() => setActiveTab("dashboard")}>
+          Observability
+        </button>
+      </div>
 
-                    const reader = res.body.getReader();
-                    const decoder = new TextDecoder();
-                    let buffer = "";
+      {/* ═══════════ RESEARCH TAB ═══════════ */}
+      {activeTab === "research" && (
+        <div>
+          {/* Search */}
+          <div className="search-wrap">
+            <input
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && runResearch()}
+              placeholder="e.g. AI startups in India working on healthcare"
+              disabled={loading}
+            />
+            <button className="run-btn" onClick={runResearch} disabled={loading || !query.trim()}>
+              {loading ? <span className="spinner"/> : "RUN →"}
+            </button>
+          </div>
 
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-
-                        buffer += decoder.decode(value, { stream: true });
-                        const parts = buffer.split("\n\n");
-                        buffer = parts.pop();
-
-                        for (const part of parts) {
-                            const line = part.trim();
-                            if (!line.startsWith("data: ")) continue;
-                            try {
-                                const { event, data } = JSON.parse(line.slice(6));
-                                console.log("[SSE]", event, data);
-
-                                switch (event) {
-                                    case "phase":
-                                        setActivePhase(data.phase);
-                                        setDonePhases(prev =>
-                                            [...new Set([...prev, data.phase - 1])].filter(x => x > 0)
-                                        );
-                                        break;
-                                    case "plan": setPlan(data); break;
-                                    case "facts":
-                                        setCompanies(data.companies || []);
-                                        setMarketFacts(data.market_facts || []);
-                                        setChallenges(data.challenges || []);
-                                        break;
-                                    case "cache": setCacheStats(data); break;
-                                    case "report": setReport(data.content || ""); break;
-                                    case "memory_hit":
-                                    case "memory_merged":
-                                        setMemoryHit(data);
-                                        break;
-                                    case "done":
-                                        setDonePhases([1, 2, 3, 4, 5]);
-                                        setActivePhase(0);
-                                        setIsDone(true);
-                                        setRunData(data);   // save observability data
-                                        break;
-                                    case "error": setError(data.message); break;
-                                }
-                            } catch (e) {
-                                console.warn("[SSE parse error]", e, part);
-                            }
-                        }
-                    }
-                } catch (e) {
-                    setError(`Could not connect to backend at ${API_BASE}. Is uvicorn running?`);
-                }
-
-                setLoading(false);
-            }
-
-            const showProgress = loading || donePhases.length > 0;
-
-            return (
-                <div className="container">
-
-                    {/* Header */}
-                    <div className="header">
-                        <div className="header-tag">AI Research Agent</div>
-                        <h1>Research<br /><span>anything.</span></h1>
-                        <p className="subtitle">Powered by OpenAI + Tavily · Built by you</p>
-                    </div>
-
-                    {/* Tabs */}
-                    <div className="tabs">
-                        <button className={`tab ${activeTab === "research" ? "active" : ""}`}
-                            onClick={() => setActiveTab("research")}>
-                            Research
-                        </button>
-                        <button className={`tab ${activeTab === "dashboard" ? "active" : ""}`}
-                            onClick={() => setActiveTab("dashboard")}>
-                            Observability
-                        </button>
-                    </div>
-
-                    {/* ═══════════ RESEARCH TAB ═══════════ */}
-                    {activeTab === "research" && (
-                        <div>
-                            {/* Search */}
-                            <div className="search-wrap">
-                                <input
-                                    value={query}
-                                    onChange={e => setQuery(e.target.value)}
-                                    onKeyDown={e => e.key === "Enter" && runResearch()}
-                                    placeholder="e.g. AI startups in India working on healthcare"
-                                    disabled={loading}
-                                />
-                                <button className="run-btn" onClick={runResearch} disabled={loading || !query.trim()}>
-                                    {loading ? <span className="spinner" /> : "RUN →"}
-                                </button>
-                            </div>
-
-                            {/* Phases */}
-                            {showProgress && (
-                                <div className="phases">
-                                    {PHASES.map(p => (
-                                        <div key={p.id} className={`phase ${donePhases.includes(p.id) ? "done" :
-                                                activePhase === p.id ? "active" : ""
-                                            }`}>
-                                            {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {error && <div className="error-box">⚠ {error}</div>}
-                            {memoryHit && (
-                                <div className="memory-banner">
-                                    🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory
-                                </div>
-                            )}
-                            {isDone && (
-                                <div className="done-banner">
-                                    ✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · report saved
-                                </div>
-                            )}
-
-                            {/* Plan */}
-                            {plan && (
-                                <div className="card">
-                                    <div className="card-label">Research Plan</div>
-                                    <div className="searches">
-                                        {plan.searches.map((s, i) => (
-                                            <span key={i} className="search-tag">{s}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Companies */}
-                            {companies.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Key Companies ({companies.length})</div>
-                                    <div className="company-grid">
-                                        {companies.map((c, i) => (
-                                            <div key={i} className="company-card">
-                                                <div className="company-name">{c.name}</div>
-                                                <div className="company-focus">{c.focus}</div>
-                                                <div className="company-fact">{c.key_fact}</div>
-                                                <Evidence ev={c.evidence} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Market Facts */}
-                            {marketFacts.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Market Overview</div>
-                                    <ul className="fact-list">
-                                        {marketFacts.map((f, i) => (
-                                            <li key={i}>
-                                                <span className="fact-arrow">→</span>
-                                                <div className="fact-body">
-                                                    <span>{f.fact || f}</span>
-                                                    {f.evidence && (
-                                                        <div className="fact-source">
-                                                            <span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>
-                                                                {f.evidence.confidence}
-                                                            </span>
-                                                            {f.evidence.source_url && (
-                                                                <a className="source-link" href={f.evidence.source_url}
-                                                                    target="_blank" rel="noreferrer">
-                                                                    ↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Challenges */}
-                            {challenges.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Challenges</div>
-                                    <ul className="fact-list">
-                                        {challenges.map((c, i) => (
-                                            <li key={i}>
-                                                <span className="fact-arrow">→</span>
-                                                <div className="fact-body">
-                                                    <span>{c.challenge || c}</span>
-                                                    {c.evidence && (
-                                                        <div className="fact-source">
-                                                            <span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>
-                                                                {c.evidence.confidence}
-                                                            </span>
-                                                            {c.evidence.source_url && (
-                                                                <a className="source-link" href={c.evidence.source_url}
-                                                                    target="_blank" rel="noreferrer">
-                                                                    ↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 45)}
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Cache */}
-                            {cacheStats && (
-                                <div className="cache-row">
-                                    <span className="cache-badge">
-                                        ◆ {cacheStats.cached_queries} queries cached · {cacheStats.cache_size_kb}kb ·
-                                        &nbsp;{cacheStats.total_topics || 0} memory topics
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Report */}
-                            {report && (
-                                <div className="card">
-                                    <div className="card-label">Full Report</div>
-                                    <div className="report-content">{report}</div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* ═══════════ DASHBOARD TAB ═══════════ */}
-                    {activeTab === "dashboard" && (
-                        <Dashboard runData={runData} />
-                    )}
-
+          {/* Phases */}
+          {showProgress && (
+            <div className="phases">
+              {PHASES.map(p => (
+                <div key={p.id} className={`phase ${
+                  donePhases.includes(p.id) ? "done" :
+                  activePhase === p.id      ? "active" : ""
+                }`}>
+                  {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
                 </div>
-            );
-        }
+              ))}
+            </div>
+          )}
 
-        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-    </script>
+          {error     && <div className="error-box">⚠ {error}</div>}
+          {memoryHit && (
+            <div className="memory-banner">
+              🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory
+            </div>
+          )}
+          {isDone && (
+            <div className="done-banner">
+              ✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · report saved
+            </div>
+          )}
+
+          {/* Plan */}
+          {plan && (
+            <div className="card">
+              <div className="card-label">Research Plan</div>
+              <div className="searches">
+                {plan.searches.map((s, i) => (
+                  <span key={i} className="search-tag">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Companies */}
+          {companies.length > 0 && (
+            <div className="card">
+              <div className="card-label">Key Companies ({companies.length})</div>
+              <div className="company-grid">
+                {companies.map((c, i) => (
+                  <div key={i} className="company-card">
+                    <div className="company-name">{c.name}</div>
+                    <div className="company-focus">{c.focus}</div>
+                    <div className="company-fact">{c.key_fact}</div>
+                    <Evidence ev={c.evidence} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Market Facts */}
+          {marketFacts.length > 0 && (
+            <div className="card">
+              <div className="card-label">Market Overview</div>
+              <ul className="fact-list">
+                {marketFacts.map((f, i) => (
+                  <li key={i}>
+                    <span className="fact-arrow">→</span>
+                    <div className="fact-body">
+                      <span>{f.fact || f}</span>
+                      {f.evidence && (
+                        <div className="fact-source">
+                          <span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>
+                            {f.evidence.confidence}
+                          </span>
+                          {f.evidence.source_url && (
+                            <a className="source-link" href={f.evidence.source_url}
+                               target="_blank" rel="noreferrer">
+                              ↗ {(f.evidence.source_title || f.evidence.source_url).slice(0,45)}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Challenges */}
+          {challenges.length > 0 && (
+            <div className="card">
+              <div className="card-label">Challenges</div>
+              <ul className="fact-list">
+                {challenges.map((c, i) => (
+                  <li key={i}>
+                    <span className="fact-arrow">→</span>
+                    <div className="fact-body">
+                      <span>{c.challenge || c}</span>
+                      {c.evidence && (
+                        <div className="fact-source">
+                          <span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>
+                            {c.evidence.confidence}
+                          </span>
+                          {c.evidence.source_url && (
+                            <a className="source-link" href={c.evidence.source_url}
+                               target="_blank" rel="noreferrer">
+                              ↗ {(c.evidence.source_title || c.evidence.source_url).slice(0,45)}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Cache */}
+          {cacheStats && (
+            <div className="cache-row">
+              <span className="cache-badge">
+                ◆ {cacheStats.cached_queries} queries cached · {cacheStats.cache_size_kb}kb ·
+                &nbsp;{cacheStats.total_topics || 0} memory topics
+              </span>
+            </div>
+          )}
+
+          {/* Report */}
+          {report && (
+            <div className="card">
+              <div className="card-label">Full Report</div>
+              <div className="report-content">{report}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════ DASHBOARD TAB ═══════════ */}
+      {activeTab === "dashboard" && (
+        <Dashboard runData={runData} />
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
 </body>
-
 </html>
