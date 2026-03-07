@@ -5,6 +5,7 @@ from datetime import datetime
 from utils.ai_client import ask_ai
 
 REPORTS_DIR = "reports"
+os.makedirs(REPORTS_DIR, exist_ok=True) 
 
 def generate_report(query: str, facts: dict) -> str:
     """
