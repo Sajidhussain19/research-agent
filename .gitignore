@@ -1,0 +1,19 @@
+# API keys — NEVER upload these
+.env
+
+# Cache and memory — local only
+cache/
+memory/
+reports/
+
+# Python junk
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# OS junk
+.DS_Store
+Thumbs.db
