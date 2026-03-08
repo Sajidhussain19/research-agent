@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, Response
 from pydantic import BaseModel
 import json
 import asyncio
@@ -21,11 +21,11 @@ from agent.reporter import generate_report
 from agent.memory import get_cache_stats
 from agent.memory_store import save_memory, load_memory, get_memory_stats, _merge_memories
 from agent.classifier import classify_query
+from agent.exporter import generate_docx, generate_pptx
 from utils.ai_client import ask_ai
 
 app = FastAPI(title="AI Research Agent API")
 
-# ── CORS — allow everything ───────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -43,21 +43,23 @@ CORS_HEADERS = {
 class ResearchRequest(BaseModel):
     query: str
 
+class ExportRequest(BaseModel):
+    query: str
+    facts: dict
+    report: str
+
 
 @app.get("/")
 def root():
     return JSONResponse({"status": "AI Research Agent running"}, headers=CORS_HEADERS)
 
-
 @app.get("/cache/stats")
 def cache_stats():
     return get_cache_stats()
 
-
 @app.get("/memory/stats")
 def memory_stats():
     return get_memory_stats()
-
 
 @app.get("/observability")
 def observability():
@@ -68,9 +70,7 @@ def observability():
 
 @app.options("/search/quick")
 async def quick_search_options():
-    """Handle preflight CORS request."""
     return JSONResponse({}, headers=CORS_HEADERS)
-
 
 @app.post("/search/quick")
 async def quick_search(request: ResearchRequest):
@@ -83,11 +83,9 @@ Structure your answer with:
 - A direct answer (2-3 sentences)
 - Key points (3-5 bullet points)
 - A one-line summary at the end
-
 Be helpful, accurate, and brief."""
 
     prompt = f"Answer this question: {query}"
-
     loop   = asyncio.get_event_loop()
     answer = await loop.run_in_executor(None, ask_ai, prompt, system)
 
@@ -106,12 +104,59 @@ Be helpful, accurate, and brief."""
 async def classify_options():
     return JSONResponse({}, headers=CORS_HEADERS)
 
-
 @app.post("/search/classify")
 async def classify(request: ResearchRequest):
     loop   = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, classify_query, request.query)
     return JSONResponse(result, headers=CORS_HEADERS)
+
+
+# ── DOCX Export ───────────────────────────────────────────────────────────────
+
+@app.options("/export/docx")
+async def docx_options():
+    return JSONResponse({}, headers=CORS_HEADERS)
+
+@app.post("/export/docx")
+async def export_docx(request: ExportRequest):
+    """Generate and return a .docx Word document."""
+    loop     = asyncio.get_event_loop()
+    docx_bytes = await loop.run_in_executor(
+        None, generate_docx, request.query, request.facts, request.report
+    )
+    filename = request.query[:40].replace(" ", "_") + ".docx"
+    return Response(
+        content=docx_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={
+            **CORS_HEADERS,
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        }
+    )
+
+
+# ── PPTX Export ───────────────────────────────────────────────────────────────
+
+@app.options("/export/pptx")
+async def pptx_options():
+    return JSONResponse({}, headers=CORS_HEADERS)
+
+@app.post("/export/pptx")
+async def export_pptx(request: ExportRequest):
+    """Generate and return a .pptx PowerPoint presentation."""
+    loop       = asyncio.get_event_loop()
+    pptx_bytes = await loop.run_in_executor(
+        None, generate_pptx, request.query, request.facts, request.report
+    )
+    filename = request.query[:40].replace(" ", "_") + ".pptx"
+    return Response(
+        content=pptx_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        headers={
+            **CORS_HEADERS,
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        }
+    )
 
 
 # ── Report cache helpers ──────────────────────────────────────────────────────
@@ -120,15 +165,12 @@ def _get_report_cache_path(query: str) -> str:
     key = hashlib.md5(query.lower().strip().encode()).hexdigest()[:10]
     return os.path.join("cache", f"report_{key}.txt")
 
-
 def _load_cached_report(query: str) -> str | None:
     path = _get_report_cache_path(query)
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
-            print(f"  ⚡ Report cache hit!")
             return f.read()
     return None
-
 
 def _save_report_cache(query: str, report: str) -> None:
     path = _get_report_cache_path(query)
@@ -151,18 +193,13 @@ async def research_stream(request: ResearchRequest):
         timings   = {}
 
         try:
-            # ── Phase 1 — Plan ───────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 1, "message": "Planning research..."})
             await asyncio.sleep(0.1)
             plan = plan_research(query)
             timings["plan"] = round(time.time() - t, 2)
-            yield send("plan", {
-                "subtopics": plan["SUBTOPICS"],
-                "searches":  plan["SEARCHES"]
-            })
+            yield send("plan", {"subtopics": plan["SUBTOPICS"], "searches": plan["SEARCHES"]})
 
-            # ── Memory Check ─────────────────────────────────────────
             prior_memory = load_memory(query)
             if prior_memory:
                 yield send("memory_hit", {
@@ -170,19 +207,14 @@ async def research_stream(request: ResearchRequest):
                     "companies": len(prior_memory.get("companies", []))
                 })
 
-            # ── Phase 2 — Search ─────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 2, "message": "Searching web..."})
             await asyncio.sleep(0.1)
             results       = await search_all_async(plan["SEARCHES"])
             total_results = sum(len(r) for r in results.values())
             timings["search"] = round(time.time() - t, 2)
-            yield send("search_done", {
-                "queries": len(results),
-                "results": total_results
-            })
+            yield send("search_done", {"queries": len(results), "results": total_results})
 
-            # ── Phase 3 — Extract ────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 3, "message": "Extracting facts in parallel..."})
             await asyncio.sleep(0.1)
@@ -204,7 +236,6 @@ async def research_stream(request: ResearchRequest):
 
             save_memory(query, facts)
 
-            # ── Phase 4 — Cache + Memory Stats ───────────────────────
             yield send("phase", {"phase": 4, "message": "Saving to memory..."})
             await asyncio.sleep(0.1)
             cache_data  = get_cache_stats()
@@ -215,7 +246,6 @@ async def research_stream(request: ResearchRequest):
                 "total_companies": memory_data["total_companies"]
             })
 
-            # ── Phase 5 — Report ─────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 5, "message": "Generating report..."})
             await asyncio.sleep(0.1)
@@ -226,16 +256,13 @@ async def research_stream(request: ResearchRequest):
                 yield send("report_source", {"source": "cache"})
             else:
                 loop   = asyncio.get_event_loop()
-                report = await loop.run_in_executor(
-                    None, generate_report, query, facts
-                )
+                report = await loop.run_in_executor(None, generate_report, query, facts)
                 _save_report_cache(query, report)
                 yield send("report_source", {"source": "generated"})
 
             timings["report"] = round(time.time() - t, 2)
             yield send("report", {"content": report})
 
-            # ── Done ─────────────────────────────────────────────────
             total_time     = round(time.time() - run_start, 2)
             estimated_cost = round((400 * 3 * 0.00015 + 600 * 3 * 0.0006) / 1000, 4)
 
