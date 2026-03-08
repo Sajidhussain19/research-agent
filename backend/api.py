@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 import json
 import asyncio
@@ -20,17 +20,25 @@ from agent.extractor import extract_facts_async
 from agent.reporter import generate_report
 from agent.memory import get_cache_stats
 from agent.memory_store import save_memory, load_memory, get_memory_stats, _merge_memories
-from agent.classifier import classify_query          # ← new
-from utils.ai_client import ask_ai_async             # ← for quick answers
+from agent.classifier import classify_query
+from utils.ai_client import ask_ai
 
 app = FastAPI(title="AI Research Agent API")
 
+# ── CORS — allow everything ───────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin":  "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+}
 
 class ResearchRequest(BaseModel):
     query: str
@@ -38,7 +46,7 @@ class ResearchRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {"status": "AI Research Agent running"}
+    return JSONResponse({"status": "AI Research Agent running"}, headers=CORS_HEADERS)
 
 
 @app.get("/cache/stats")
@@ -56,15 +64,16 @@ def observability():
     return {"cache": get_cache_stats(), "memory": get_memory_stats()}
 
 
-# ── Quick Search endpoint ─────────────────────────────────────────────────────
+# ── Quick Search ──────────────────────────────────────────────────────────────
+
+@app.options("/search/quick")
+async def quick_search_options():
+    """Handle preflight CORS request."""
+    return JSONResponse({}, headers=CORS_HEADERS)
+
 
 @app.post("/search/quick")
 async def quick_search(request: ResearchRequest):
-    """
-    Quick answer — single AI call, no web search.
-    Returns in 3-5 seconds instead of 20-30.
-    Best for: definitions, explanations, simple facts.
-    """
     query = request.query
     start = time.time()
 
@@ -82,26 +91,27 @@ Be helpful, accurate, and brief."""
     loop   = asyncio.get_event_loop()
     answer = await loop.run_in_executor(None, ask_ai, prompt, system)
 
-    return {
+    return JSONResponse({
         "query":      query,
         "answer":     answer,
         "mode":       "quick",
         "time_taken": round(time.time() - start, 2),
         "cost":       "$0.0001"
-    }
+    }, headers=CORS_HEADERS)
 
 
-# ── Auto-classify endpoint ────────────────────────────────────────────────────
+# ── Classify ──────────────────────────────────────────────────────────────────
+
+@app.options("/search/classify")
+async def classify_options():
+    return JSONResponse({}, headers=CORS_HEADERS)
+
 
 @app.post("/search/classify")
 async def classify(request: ResearchRequest):
-    """
-    Classifies query as 'quick' or 'research'.
-    Frontend uses this to suggest the right mode.
-    """
     loop   = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, classify_query, request.query)
-    return result
+    return JSONResponse(result, headers=CORS_HEADERS)
 
 
 # ── Report cache helpers ──────────────────────────────────────────────────────
@@ -245,6 +255,7 @@ async def research_stream(request: ResearchRequest):
         generate(),
         media_type="text/event-stream",
         headers={
+            **CORS_HEADERS,
             "Cache-Control":     "no-cache",
             "X-Accel-Buffering": "no"
         }
