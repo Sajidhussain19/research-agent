@@ -21,6 +21,7 @@
             --green: #00ff88;
             --yellow: #ffd166;
             --red: #ff4d6d;
+            --purple: #c084fc;
             --text: #dce8f0;
             --muted: #4a6070;
             --font-heading: 'Syne', sans-serif;
@@ -103,6 +104,7 @@
             letter-spacing: 0.05em;
         }
 
+        /* ── Tabs ── */
         .tabs {
             display: flex;
             gap: 0;
@@ -135,6 +137,77 @@
             border-bottom-color: var(--accent);
         }
 
+        /* ── Mode toggle ── */
+        .mode-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            width: fit-content;
+        }
+
+        .mode-btn {
+            padding: 10px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            background: var(--surface);
+            color: var(--muted);
+        }
+
+        .mode-btn.active-research {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent);
+            border-right: 1px solid var(--border);
+        }
+
+        .mode-btn.active-quick {
+            background: rgba(192, 132, 252, 0.1);
+            color: var(--purple);
+        }
+
+        .mode-btn:not(.active-research):not(.active-quick):hover {
+            color: var(--text);
+        }
+
+        /* ── Auto-suggest banner ── */
+        .suggest-banner {
+            padding: 10px 16px;
+            background: rgba(192, 132, 252, 0.08);
+            border: 1px solid var(--purple);
+            border-radius: 5px;
+            color: var(--purple);
+            font-size: 0.8rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .suggest-btn {
+            padding: 4px 14px;
+            background: rgba(192, 132, 252, 0.15);
+            border: 1px solid var(--purple);
+            border-radius: 3px;
+            color: var(--purple);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .suggest-btn:hover {
+            background: rgba(192, 132, 252, 0.25);
+        }
+
+        /* ── Search ── */
         .search-wrap {
             display: flex;
             margin-bottom: 36px;
@@ -144,9 +217,18 @@
             transition: border-color 0.2s;
         }
 
+        .search-wrap.quick-mode {
+            border-color: rgba(192, 132, 252, 0.4);
+        }
+
         .search-wrap:focus-within {
             border-color: var(--accent);
             box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.08);
+        }
+
+        .search-wrap.quick-mode:focus-within {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 2px rgba(192, 132, 252, 0.08);
         }
 
         input {
@@ -178,15 +260,70 @@
             white-space: nowrap;
         }
 
+        button.run-btn.quick {
+            background: var(--purple);
+        }
+
         button.run-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
         }
 
         button.run-btn:hover:not(:disabled) {
-            background: #33ecff;
+            opacity: 0.85;
         }
 
+        /* ── Quick answer card ── */
+        .quick-card {
+            background: var(--surface);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 6px;
+            padding: 28px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .quick-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--purple);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(192, 132, 252, 0.2);
+        }
+
+        .quick-answer {
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+            line-height: 1.9;
+            color: var(--text);
+            font-family: var(--font-mono);
+        }
+
+        .quick-meta {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: var(--muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        .quick-meta span {
+            color: var(--purple);
+        }
+
+        /* ── Phases ── */
         .phases {
             display: flex;
             gap: 6px;
@@ -222,14 +359,15 @@
 
             0%,
             100% {
-                opacity: 1;
+                opacity: 1
             }
 
             50% {
-                opacity: 0.6;
+                opacity: 0.6
             }
         }
 
+        /* ── Cards ── */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -242,12 +380,12 @@
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(12px)
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
@@ -411,7 +549,6 @@
             font-family: var(--font-mono);
         }
 
-        /* ── Download buttons ── */
         .download-row {
             display: flex;
             gap: 10px;
@@ -532,6 +669,7 @@
             margin-bottom: 20px;
         }
 
+        /* Dashboard */
         .obs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -654,7 +792,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
         const PHASES = [
             { id: 1, label: "01 PLAN" },
@@ -669,57 +807,28 @@
         // ── Download helpers ──────────────────────────────────────────────────────────
 
         function downloadTXT(query, report) {
-            const content = [
-                `Research Query: ${query}`,
-                `Generated:      ${new Date().toLocaleString()}`,
-                "=".repeat(60),
-                "",
-                report
-            ].join("\n");
-
+            const content = [`Research Query: ${query}`, `Generated: ${new Date().toLocaleString()}`, "=".repeat(60), "", report].join("\n");
             const blob = new Blob([content], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
-            a.href = url;
-            a.download = query.slice(0, 40).replace(/\s+/g, "_") + ".txt";
-            a.click();
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = query.slice(0, 40).replace(/\s+/g, "_") + ".txt";
+            a.click(); URL.revokeObjectURL(url);
         }
 
         function downloadPDF(query, report) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: "mm", format: "a4" });
-
-            // Header background
-            doc.setFillColor(8, 11, 15);
-            doc.rect(0, 0, 210, 297, "F");
-
-            // Title
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(18);
-            doc.setTextColor(0, 229, 255);
+            doc.setFillColor(8, 11, 15); doc.rect(0, 0, 210, 297, "F");
+            doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(0, 229, 255);
             const titleLines = doc.splitTextToSize(query, 175);
             doc.text(titleLines, 15, 20);
-
-            // Subtitle
-            const titleHeight = titleLines.length * 8;
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(9);
-            doc.setTextColor(74, 96, 112);
-            doc.text(`Generated: ${new Date().toLocaleString()}  ·  AI Research Agent`, 15, 20 + titleHeight + 4);
-
-            // Divider
-            doc.setDrawColor(0, 229, 255);
-            doc.setLineWidth(0.3);
-            doc.line(15, 20 + titleHeight + 10, 195, 20 + titleHeight + 10);
-
-            // Body
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.setTextColor(220, 232, 240);
+            const th = titleLines.length * 8;
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(74, 96, 112);
+            doc.text(`Generated: ${new Date().toLocaleString()}  ·  AI Research Agent`, 15, 20 + th + 4);
+            doc.setDrawColor(0, 229, 255); doc.setLineWidth(0.3); doc.line(15, 20 + th + 10, 195, 20 + th + 10);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(220, 232, 240);
             const bodyLines = doc.splitTextToSize(report, 180);
-            doc.text(bodyLines, 15, 20 + titleHeight + 18);
-
+            doc.text(bodyLines, 15, 20 + th + 18);
             doc.save(query.slice(0, 40).replace(/\s+/g, "_") + ".pdf");
         }
 
@@ -736,9 +845,7 @@
                         ? <a className="source-link" href={ev.source_url} target="_blank" rel="noreferrer" title={title}>
                             ↗ {title.slice(0, 38)}{title.length > 38 ? "…" : ""}
                         </a>
-                        : title
-                            ? <span className="source-link" style={{ cursor: "default" }}>{title.slice(0, 40)}</span>
-                            : null
+                        : title ? <span className="source-link" style={{ cursor: "default" }}>{title.slice(0, 40)}</span> : null
                     }
                 </div>
             );
@@ -749,106 +856,62 @@
             return (
                 <div className="timing-row">
                     <span className="timing-label">{label}</span>
-                    <div className="timing-bar-wrap">
-                        <div className="timing-bar" style={{ width: `${pct}%` }} />
-                    </div>
+                    <div className="timing-bar-wrap"><div className="timing-bar" style={{ width: `${pct}%` }} /></div>
                     <span className="timing-value">{value}s</span>
                 </div>
             );
         }
 
         function Dashboard({ runData }) {
-            if (!runData) {
-                return (
-                    <div className="empty-state">
-                        No run data yet.<br />
-                        Run a research query first,<br />
-                        then come back here to see the stats.
-                    </div>
-                );
-            }
-
+            if (!runData) return (
+                <div className="empty-state">No run data yet.<br />Run a research query first,<br />then come back here to see the stats.</div>
+            );
             const { timings, total_time, total_searches, estimated_cost, memory_topics } = runData;
             const maxTiming = Math.max(...Object.values(timings || {}), 0.1);
-
             return (
                 <div>
                     <div className="card">
                         <div className="card-label">Run Summary</div>
                         <div className="obs-grid">
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Total Time</span>
-                                <span className="obs-stat-value">{total_time}s</span>
-                                <span className="obs-stat-sub">end to end</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Searches</span>
-                                <span className="obs-stat-value">{total_searches}</span>
-                                <span className="obs-stat-sub">async parallel</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Est. Cost</span>
-                                <span className="obs-stat-value" style={{ fontSize: "1.4rem" }}>${estimated_cost}</span>
-                                <span className="obs-stat-sub">gpt-4o-mini</span>
-                            </div>
-                            <div className="obs-stat">
-                                <span className="obs-stat-label">Memory Topics</span>
-                                <span className="obs-stat-value">{(memory_topics || []).length}</span>
-                                <span className="obs-stat-sub">topics known</span>
-                            </div>
+                            <div className="obs-stat"><span className="obs-stat-label">Total Time</span><span className="obs-stat-value">{total_time}s</span><span className="obs-stat-sub">end to end</span></div>
+                            <div className="obs-stat"><span className="obs-stat-label">Searches</span><span className="obs-stat-value">{total_searches}</span><span className="obs-stat-sub">async parallel</span></div>
+                            <div className="obs-stat"><span className="obs-stat-label">Est. Cost</span><span className="obs-stat-value" style={{ fontSize: "1.4rem" }}>${estimated_cost}</span><span className="obs-stat-sub">gpt-4o-mini</span></div>
+                            <div className="obs-stat"><span className="obs-stat-label">Memory Topics</span><span className="obs-stat-value">{(memory_topics || []).length}</span><span className="obs-stat-sub">topics known</span></div>
                         </div>
                     </div>
-
                     {timings && Object.keys(timings).length > 0 && (
                         <div className="card">
                             <div className="card-label">Phase Timings</div>
-                            {Object.entries(timings).map(([phase, val]) => (
-                                <TimingBar key={phase} label={phase} value={val} max={maxTiming} />
-                            ))}
+                            {Object.entries(timings).map(([phase, val]) => <TimingBar key={phase} label={phase} value={val} max={maxTiming} />)}
                             <div style={{ marginTop: 16, fontSize: "0.72rem", color: "var(--muted)" }}>
-                                Longest phase → {Object.entries(timings).sort((a, b) => b[1] - a[1])[0]?.[0]}
-                                &nbsp;({Math.max(...Object.values(timings))}s)
+                                Longest phase → {Object.entries(timings).sort((a, b) => b[1] - a[1])[0]?.[0]} ({Math.max(...Object.values(timings))}s)
                             </div>
                         </div>
                     )}
-
                     <div className="card">
                         <div className="card-label">Agent Knowledge Base</div>
-                        {(memory_topics || []).length === 0 ? (
-                            <div style={{ color: "var(--muted)", fontSize: "0.85rem" }}>No topics in memory yet.</div>
-                        ) : (
-                            (memory_topics || []).map((t, i) => (
+                        {(memory_topics || []).length === 0
+                            ? <div style={{ color: "var(--muted)", fontSize: "0.85rem" }}>No topics in memory yet.</div>
+                            : (memory_topics || []).map((t, i) => (
                                 <div key={i} className="topic-row">
                                     <span className="topic-name">{t.topic?.slice(0, 55)}</span>
                                     <span className="topic-badge">{t.companies} companies</span>
                                     <span className="topic-runs">{t.access_count}× runs</span>
                                 </div>
                             ))
-                        )}
+                        }
                     </div>
-
                     <div className="card">
                         <div className="card-label">Cost Breakdown</div>
                         <div style={{ fontSize: "0.82rem", lineHeight: 2, color: "var(--muted)" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Planner (input ~200 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00003</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Extractor (input ~600 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00009</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span>Reporter (output ~2000 tokens)</span>
-                                <span style={{ color: "var(--text)" }}>~$0.00120</span>
-                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}><span>Planner</span><span style={{ color: "var(--text)" }}>~$0.00003</span></div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}><span>Extractor</span><span style={{ color: "var(--text)" }}>~$0.00009</span></div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}><span>Reporter</span><span style={{ color: "var(--text)" }}>~$0.00120</span></div>
                             <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--border)", paddingTop: 8, marginTop: 4 }}>
                                 <span style={{ color: "var(--text)" }}>Total per run</span>
                                 <span style={{ color: "var(--green)", fontWeight: "bold" }}>${estimated_cost}</span>
                             </div>
-                            <div style={{ marginTop: 8, color: "var(--accent)" }}>
-                                With $4.83 balance → ~{Math.floor(4.83 / (estimated_cost || 0.003))} runs remaining
-                            </div>
+                            <div style={{ marginTop: 8, color: "var(--accent)" }}>With $4.83 → ~{Math.floor(4.83 / (estimated_cost || 0.003))} runs remaining</div>
                         </div>
                     </div>
                 </div>
@@ -859,6 +922,7 @@
 
         function App() {
             const [activeTab, setActiveTab] = useState("research");
+            const [searchMode, setSearchMode] = useState("research"); // "research" | "quick"
             const [query, setQuery] = useState("");
             const [loading, setLoading] = useState(false);
             const [activePhase, setActivePhase] = useState(0);
@@ -873,6 +937,9 @@
             const [isDone, setIsDone] = useState(false);
             const [memoryHit, setMemoryHit] = useState(null);
             const [runData, setRunData] = useState(null);
+            const [quickResult, setQuickResult] = useState(null);  // quick search result
+            const [suggestion, setSuggestion] = useState(null);  // auto-classify suggestion
+            const classifyTimer = useRef(null);
 
             function reset() {
                 setActivePhase(0); setDonePhases([]);
@@ -880,26 +947,63 @@
                 setMarketFacts([]); setChallenges([]);
                 setReport(""); setCacheStats(null);
                 setError(""); setIsDone(false);
-                setMemoryHit(null);
+                setMemoryHit(null); setQuickResult(null);
+                setSuggestion(null);
+            }
+
+            // Auto-classify after user stops typing for 800ms
+            useEffect(() => {
+                if (!query.trim() || query.length < 5) { setSuggestion(null); return; }
+                clearTimeout(classifyTimer.current);
+                classifyTimer.current = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/search/classify`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ query: query.trim() })
+                        });
+                        const data = await res.json();
+                        // Only show suggestion if it differs from current mode
+                        if (data.type && data.type !== searchMode) {
+                            setSuggestion(data);
+                        } else {
+                            setSuggestion(null);
+                        }
+                    } catch { setSuggestion(null); }
+                }, 800);
+                return () => clearTimeout(classifyTimer.current);
+            }, [query, searchMode]);
+
+            async function runQuickSearch() {
+                if (!query.trim() || loading) return;
+                reset();
+                setLoading(true);
+                try {
+                    const res = await fetch(`${API_BASE}/search/quick`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ query: query.trim() })
+                    });
+                    const data = await res.json();
+                    setQuickResult(data);
+                    setIsDone(true);
+                } catch (e) {
+                    setError("Could not connect to backend.");
+                }
+                setLoading(false);
             }
 
             async function runResearch() {
                 if (!query.trim() || loading) return;
                 reset();
                 setLoading(true);
-
                 try {
                     const res = await fetch(`${API_BASE}/research/stream`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ query: query.trim() })
                     });
-
-                    if (!res.ok) {
-                        setError(`Server error: ${res.status} ${res.statusText}`);
-                        setLoading(false);
-                        return;
-                    }
+                    if (!res.ok) { setError(`Server error: ${res.status}`); setLoading(false); return; }
 
                     const reader = res.body.getReader();
                     const decoder = new TextDecoder();
@@ -908,23 +1012,18 @@
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
-
                         buffer += decoder.decode(value, { stream: true });
                         const parts = buffer.split("\n\n");
                         buffer = parts.pop();
-
                         for (const part of parts) {
                             const line = part.trim();
                             if (!line.startsWith("data: ")) continue;
                             try {
                                 const { event, data } = JSON.parse(line.slice(6));
-
                                 switch (event) {
                                     case "phase":
                                         setActivePhase(data.phase);
-                                        setDonePhases(prev =>
-                                            [...new Set([...prev, data.phase - 1])].filter(x => x > 0)
-                                        );
+                                        setDonePhases(prev => [...new Set([...prev, data.phase - 1])].filter(x => x > 0));
                                         break;
                                     case "plan": setPlan(data); break;
                                     case "facts":
@@ -934,31 +1033,30 @@
                                         break;
                                     case "cache": setCacheStats(data); break;
                                     case "report": setReport(data.content || ""); break;
-                                    case "memory_hit":
-                                    case "memory_merged":
-                                        setMemoryHit(data);
-                                        break;
+                                    case "memory_hit": case "memory_merged": setMemoryHit(data); break;
                                     case "done":
-                                        setDonePhases([1, 2, 3, 4, 5]);
-                                        setActivePhase(0);
-                                        setIsDone(true);
-                                        setRunData(data);
+                                        setDonePhases([1, 2, 3, 4, 5]); setActivePhase(0);
+                                        setIsDone(true); setRunData(data);
                                         break;
                                     case "error": setError(data.message); break;
                                 }
-                            } catch (e) {
-                                console.warn("[SSE parse error]", e, part);
-                            }
+                            } catch (e) { console.warn("[SSE]", e); }
                         }
                     }
                 } catch (e) {
                     setError(`Could not connect to backend at ${API_BASE}.`);
                 }
-
                 setLoading(false);
             }
 
+            function handleRun() {
+                searchMode === "quick" ? runQuickSearch() : runResearch();
+            }
+
             const showProgress = loading || donePhases.length > 0;
+            const placeholder = searchMode === "quick"
+                ? "e.g. What is RAG? How does GPT work?"
+                : "e.g. AI startups in India working on healthcare";
 
             return (
                 <div className="container">
@@ -967,7 +1065,7 @@
                     <div className="header">
                         <div className="header-tag">AI Research Agent</div>
                         <h1>Research<br /><span>anything.</span></h1>
-                        <p className="subtitle">Powered by OpenAI + Tavily · Built by you</p>
+                        <p className="subtitle">FOR EVERYONE</p>
                     </div>
 
                     {/* Tabs */}
@@ -980,164 +1078,194 @@
                     {activeTab === "research" && (
                         <div>
 
-                            {/* Search bar */}
-                            <div className="search-wrap">
-                                <input
-                                    value={query}
-                                    onChange={e => setQuery(e.target.value)}
-                                    onKeyDown={e => e.key === "Enter" && runResearch()}
-                                    placeholder="e.g. AI startups in India working on healthcare"
-                                    disabled={loading}
-                                />
-                                <button className="run-btn" onClick={runResearch} disabled={loading || !query.trim()}>
-                                    {loading ? <span className="spinner" /> : "RUN →"}
+                            {/* Mode toggle */}
+                            <div className="mode-toggle">
+                                <button
+                                    className={`mode-btn ${searchMode === "research" ? "active-research" : ""}`}
+                                    onClick={() => { setSearchMode("research"); reset(); }}
+                                >
+                                    🔬 Research
+                                </button>
+                                <button
+                                    className={`mode-btn ${searchMode === "quick" ? "active-quick" : ""}`}
+                                    onClick={() => { setSearchMode("quick"); reset(); }}
+                                >
+                                    ⚡ Quick Search
                                 </button>
                             </div>
 
-                            {/* Phase progress */}
-                            {showProgress && (
-                                <div className="phases">
-                                    {PHASES.map(p => (
-                                        <div key={p.id} className={`phase ${donePhases.includes(p.id) ? "done" :
-                                                activePhase === p.id ? "active" : ""
-                                            }`}>
-                                            {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
-                                        </div>
-                                    ))}
+                            {/* Mode description */}
+                            <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "16px" }}>
+                                {searchMode === "research"
+                                    ? "→ Full agent: web search + extraction + report · 10-20s"
+                                    : "→ Instant AI answer: no web search · 3-5s · best for definitions & explanations"
+                                }
+                            </div>
+
+                            {/* Auto-classify suggestion */}
+                            {suggestion && (
+                                <div className="suggest-banner">
+                                    <span>
+                                        {suggestion.type === "quick"
+                                            ? "⚡ This looks like a quick question — switch to Quick Search?"
+                                            : "🔬 This looks like a research topic — switch to Research mode?"
+                                        }
+                                    </span>
+                                    <button className="suggest-btn" onClick={() => { setSearchMode(suggestion.type); setSuggestion(null); }}>
+                                        Switch →
+                                    </button>
                                 </div>
                             )}
+
+                            {/* Search bar */}
+                            <div className={`search-wrap ${searchMode === "quick" ? "quick-mode" : ""}`}>
+                                <input
+                                    value={query}
+                                    onChange={e => setQuery(e.target.value)}
+                                    onKeyDown={e => e.key === "Enter" && handleRun()}
+                                    placeholder={placeholder}
+                                    disabled={loading}
+                                />
+                                <button className={`run-btn ${searchMode === "quick" ? "quick" : ""}`} onClick={handleRun} disabled={loading || !query.trim()}>
+                                    {loading ? <span className="spinner" /> : searchMode === "quick" ? "ASK →" : "RUN →"}
+                                </button>
+                            </div>
 
                             {error && <div className="error-box">⚠ {error}</div>}
 
-                            {memoryHit && (
-                                <div className="memory-banner">
-                                    🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory
-                                </div>
-                            )}
-
-                            {isDone && (
-                                <div className="done-banner">
-                                    ✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · report saved
-                                </div>
-                            )}
-
-                            {/* Research Plan */}
-                            {plan && (
-                                <div className="card">
-                                    <div className="card-label">Research Plan</div>
-                                    <div className="searches">
-                                        {plan.searches.map((s, i) => (
-                                            <span key={i} className="search-tag">{s}</span>
-                                        ))}
+                            {/* ── QUICK RESULT ── */}
+                            {quickResult && (
+                                <div className="quick-card">
+                                    <div className="quick-label">⚡ Quick Answer</div>
+                                    <div className="quick-answer">{quickResult.answer}</div>
+                                    <div className="quick-meta">
+                                        <span>⏱ {quickResult.time_taken}s</span>
+                                        <span>💰 {quickResult.cost}</span>
+                                        <span style={{ color: "var(--muted)" }}>No web search · AI knowledge only</span>
                                     </div>
                                 </div>
                             )}
 
-                            {/* Companies */}
-                            {companies.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Key Companies ({companies.length})</div>
-                                    <div className="company-grid">
-                                        {companies.map((c, i) => (
-                                            <div key={i} className="company-card">
-                                                <div className="company-name">{c.name}</div>
-                                                <div className="company-focus">{c.focus}</div>
-                                                <div className="company-fact">{c.key_fact}</div>
-                                                <Evidence ev={c.evidence} />
+                            {/* ── RESEARCH RESULTS ── */}
+                            {searchMode === "research" && (
+                                <>
+                                    {showProgress && (
+                                        <div className="phases">
+                                            {PHASES.map(p => (
+                                                <div key={p.id} className={`phase ${donePhases.includes(p.id) ? "done" : activePhase === p.id ? "active" : ""}`}>
+                                                    {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {memoryHit && (
+                                        <div className="memory-banner">
+                                            🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory
+                                        </div>
+                                    )}
+
+                                    {isDone && report && (
+                                        <div className="done-banner">
+                                            ✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · report saved
+                                        </div>
+                                    )}
+
+                                    {plan && (
+                                        <div className="card">
+                                            <div className="card-label">Research Plan</div>
+                                            <div className="searches">
+                                                {plan.searches.map((s, i) => <span key={i} className="search-tag">{s}</span>)}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                        </div>
+                                    )}
 
-                            {/* Market Facts */}
-                            {marketFacts.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Market Overview</div>
-                                    <ul className="fact-list">
-                                        {marketFacts.map((f, i) => (
-                                            <li key={i}>
-                                                <span className="fact-arrow">→</span>
-                                                <div className="fact-body">
-                                                    <span>{f.fact || f}</span>
-                                                    {f.evidence && (
-                                                        <div className="fact-source">
-                                                            <span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>{f.evidence.confidence}</span>
-                                                            {f.evidence.source_url && (
-                                                                <a className="source-link" href={f.evidence.source_url} target="_blank" rel="noreferrer">
-                                                                    ↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}
-                                                                </a>
+                                    {companies.length > 0 && (
+                                        <div className="card">
+                                            <div className="card-label">Key Companies ({companies.length})</div>
+                                            <div className="company-grid">
+                                                {companies.map((c, i) => (
+                                                    <div key={i} className="company-card">
+                                                        <div className="company-name">{c.name}</div>
+                                                        <div className="company-focus">{c.focus}</div>
+                                                        <div className="company-fact">{c.key_fact}</div>
+                                                        <Evidence ev={c.evidence} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {marketFacts.length > 0 && (
+                                        <div className="card">
+                                            <div className="card-label">Market Overview</div>
+                                            <ul className="fact-list">
+                                                {marketFacts.map((f, i) => (
+                                                    <li key={i}>
+                                                        <span className="fact-arrow">→</span>
+                                                        <div className="fact-body">
+                                                            <span>{f.fact || f}</span>
+                                                            {f.evidence && (
+                                                                <div className="fact-source">
+                                                                    <span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>{f.evidence.confidence}</span>
+                                                                    {f.evidence.source_url && <a className="source-link" href={f.evidence.source_url} target="_blank" rel="noreferrer">↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}</a>}
+                                                                </div>
                                                             )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
 
-                            {/* Challenges */}
-                            {challenges.length > 0 && (
-                                <div className="card">
-                                    <div className="card-label">Challenges</div>
-                                    <ul className="fact-list">
-                                        {challenges.map((c, i) => (
-                                            <li key={i}>
-                                                <span className="fact-arrow">→</span>
-                                                <div className="fact-body">
-                                                    <span>{c.challenge || c}</span>
-                                                    {c.evidence && (
-                                                        <div className="fact-source">
-                                                            <span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>{c.evidence.confidence}</span>
-                                                            {c.evidence.source_url && (
-                                                                <a className="source-link" href={c.evidence.source_url} target="_blank" rel="noreferrer">
-                                                                    ↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 45)}
-                                                                </a>
+                                    {challenges.length > 0 && (
+                                        <div className="card">
+                                            <div className="card-label">Challenges</div>
+                                            <ul className="fact-list">
+                                                {challenges.map((c, i) => (
+                                                    <li key={i}>
+                                                        <span className="fact-arrow">→</span>
+                                                        <div className="fact-body">
+                                                            <span>{c.challenge || c}</span>
+                                                            {c.evidence && (
+                                                                <div className="fact-source">
+                                                                    <span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>{c.evidence.confidence}</span>
+                                                                    {c.evidence.source_url && <a className="source-link" href={c.evidence.source_url} target="_blank" rel="noreferrer">↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 45)}</a>}
+                                                                </div>
                                                             )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
 
-                            {/* Cache badge */}
-                            {cacheStats && (
-                                <div className="cache-row">
-                                    <span className="cache-badge">
-                                        ◆ {cacheStats.cached_queries} queries cached · {cacheStats.cache_size_kb}kb · {cacheStats.total_topics || 0} memory topics
-                                    </span>
-                                </div>
-                            )}
+                                    {cacheStats && (
+                                        <div className="cache-row">
+                                            <span className="cache-badge">
+                                                ◆ {cacheStats.cached_queries} queries cached · {cacheStats.cache_size_kb}kb · {cacheStats.total_topics || 0} memory topics
+                                            </span>
+                                        </div>
+                                    )}
 
-                            {/* Report + Download buttons */}
-                            {report && (
-                                <div className="card">
-                                    <div className="card-label">Full Report</div>
-                                    <div className="report-content">{report}</div>
-
-                                    {/* ── Download buttons ── */}
-                                    <div className="download-row">
-                                        <button className="dl-btn dl-btn-txt" onClick={() => downloadTXT(query, report)}>
-                                            ↓ TXT
-                                        </button>
-                                        <button className="dl-btn dl-btn-pdf" onClick={() => downloadPDF(query, report)}>
-                                            ↓ PDF
-                                        </button>
-                                    </div>
-                                </div>
+                                    {report && (
+                                        <div className="card">
+                                            <div className="card-label">Full Report</div>
+                                            <div className="report-content">{report}</div>
+                                            <div className="download-row">
+                                                <button className="dl-btn dl-btn-txt" onClick={() => downloadTXT(query, report)}>↓ TXT</button>
+                                                <button className="dl-btn dl-btn-pdf" onClick={() => downloadPDF(query, report)}>↓ PDF</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
 
                         </div>
                     )}
 
                     {/* ═══ DASHBOARD TAB ═══ */}
-                    {activeTab === "dashboard" && (
-                        <Dashboard runData={runData} />
-                    )}
+                    {activeTab === "dashboard" && <Dashboard runData={runData} />}
 
                 </div>
             );

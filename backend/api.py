@@ -16,10 +16,12 @@ import asyncio
 
 from agent.planner import plan_research
 from agent.async_searcher import search_all_async
-from agent.extractor import extract_facts_async       # ← now using async version
+from agent.extractor import extract_facts_async
 from agent.reporter import generate_report
 from agent.memory import get_cache_stats
 from agent.memory_store import save_memory, load_memory, get_memory_stats, _merge_memories
+from agent.classifier import classify_query          # ← new
+from utils.ai_client import ask_ai_async             # ← for quick answers
 
 app = FastAPI(title="AI Research Agent API")
 
@@ -54,6 +56,56 @@ def observability():
     return {"cache": get_cache_stats(), "memory": get_memory_stats()}
 
 
+# ── Quick Search endpoint ─────────────────────────────────────────────────────
+
+@app.post("/search/quick")
+async def quick_search(request: ResearchRequest):
+    """
+    Quick answer — single AI call, no web search.
+    Returns in 3-5 seconds instead of 20-30.
+    Best for: definitions, explanations, simple facts.
+    """
+    query = request.query
+    start = time.time()
+
+    system = """You are a knowledgeable AI assistant.
+Answer the question clearly and concisely.
+Structure your answer with:
+- A direct answer (2-3 sentences)
+- Key points (3-5 bullet points)
+- A one-line summary at the end
+
+Be helpful, accurate, and brief."""
+
+    prompt = f"Answer this question: {query}"
+
+    loop   = asyncio.get_event_loop()
+    answer = await loop.run_in_executor(None, ask_ai, prompt, system)
+
+    return {
+        "query":      query,
+        "answer":     answer,
+        "mode":       "quick",
+        "time_taken": round(time.time() - start, 2),
+        "cost":       "$0.0001"
+    }
+
+
+# ── Auto-classify endpoint ────────────────────────────────────────────────────
+
+@app.post("/search/classify")
+async def classify(request: ResearchRequest):
+    """
+    Classifies query as 'quick' or 'research'.
+    Frontend uses this to suggest the right mode.
+    """
+    loop   = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, classify_query, request.query)
+    return result
+
+
+# ── Report cache helpers ──────────────────────────────────────────────────────
+
 def _get_report_cache_path(query: str) -> str:
     key = hashlib.md5(query.lower().strip().encode()).hexdigest()[:10]
     return os.path.join("cache", f"report_{key}.txt")
@@ -73,6 +125,8 @@ def _save_report_cache(query: str, report: str) -> None:
     with open(path, "w", encoding="utf-8") as f:
         f.write(report)
 
+
+# ── Full Research stream ──────────────────────────────────────────────────────
 
 @app.post("/research/stream")
 async def research_stream(request: ResearchRequest):
@@ -118,16 +172,13 @@ async def research_stream(request: ResearchRequest):
                 "results": total_results
             })
 
-            # ── Phase 3 — Extract (PARALLEL!) ────────────────────────
+            # ── Phase 3 — Extract ────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 3, "message": "Extracting facts in parallel..."})
             await asyncio.sleep(0.1)
-
-            # All queries extracted simultaneously!
             facts = await extract_facts_async(results)
             timings["extract"] = round(time.time() - t, 2)
 
-            # Merge with prior memory
             if prior_memory:
                 facts = _merge_memories(prior_memory, facts)
                 yield send("memory_merged", {
@@ -154,7 +205,7 @@ async def research_stream(request: ResearchRequest):
                 "total_companies": memory_data["total_companies"]
             })
 
-            # ── Phase 5 — Report (with caching!) ─────────────────────
+            # ── Phase 5 — Report ─────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 5, "message": "Generating report..."})
             await asyncio.sleep(0.1)
