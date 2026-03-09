@@ -1,73 +1,104 @@
-# agent/reporter.py
-
 import os
 from datetime import datetime
 from utils.ai_client import ask_ai
 
 REPORTS_DIR = "reports"
-os.makedirs(REPORTS_DIR, exist_ok=True) 
+os.makedirs(REPORTS_DIR, exist_ok=True)
 
-def generate_report(query: str, facts: dict) -> str:
-    """
-    Generates a professional report using AI.
-    Optimized: concise prompt = faster response.
-    """
 
-    # Build compact context
-    companies_text = ""
-    for c in facts.get("companies", []):
-        companies_text += f"- {c['name']}: {c.get('focus','')}. {c.get('key_fact','')}\n"
+def _generate_section(title: str, query: str, context: str):
 
-    market_text = "\n".join([
+    system = "You are a professional research analyst."
+
+    prompt = f"""
+Write the section: {title}
+
+Topic: {query}
+
+Use the following research data:
+
+{context}
+
+Write clearly and professionally.
+Limit to 120 words.
+"""
+
+    return ask_ai(prompt, system)
+
+
+def generate_report(query: str, facts: dict):
+
+    companies = "\n".join([
+        f"- {c['name']}: {c.get('focus','')} {c.get('key_fact','')}"
+        for c in facts.get("companies", [])
+    ])
+
+    market = "\n".join([
         f"- {f.get('fact', f) if isinstance(f, dict) else f}"
         for f in facts.get("market_facts", [])
     ])
 
-    challenges_text = "\n".join([
+    challenges = "\n".join([
         f"- {c.get('challenge', c) if isinstance(c, dict) else c}"
         for c in facts.get("challenges", [])
     ])
 
-    system = "Professional research analyst. Write clear, concise reports. Use only provided data."
+    context = f"""
+COMPANIES:
+{companies}
 
-    # Shorter, more direct prompt = faster AI response
-    prompt = f"""Write a concise research report on: "{query}"
+MARKET:
+{market}
 
-Use EXACTLY these headers:
+CHALLENGES:
+{challenges}
+"""
+
+    summary = _generate_section("Executive Summary", query, context)
+    intro = _generate_section("Introduction", query, context)
+    companies_sec = _generate_section("Key Companies", query, companies)
+    market_sec = _generate_section("Market Overview", query, market)
+    challenges_sec = _generate_section("Challenges", query, challenges)
+    conclusion = _generate_section("Conclusion", query, context)
+
+    report = f"""
 # {query.title()}
+
 ## Executive Summary
+{summary}
+
+## Introduction
+{intro}
+
 ## Key Companies
+{companies_sec}
+
 ## Market Overview
+{market_sec}
+
 ## Challenges
+{challenges_sec}
+
 ## Conclusion
+{conclusion}
+
 ## Sources
 - Tavily Web Search · {datetime.now().strftime("%Y-%m-%d")}
+"""
 
-Data:
-COMPANIES:
-{companies_text}
-MARKET FACTS:
-{market_text}
-CHALLENGES:
-{challenges_text}
-
-Keep it under 350 words. Be direct and insightful."""
-
-    report = ask_ai(prompt, system)
     _save_report(query, report)
+
     return report
 
 
-def _save_report(query: str, report: str) -> None:
-    """Save report to disk with timestamp."""
-    safe_name  = "".join(c if c.isalnum() else "_" for c in query.lower())[:50]
-    timestamp  = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filepath   = os.path.join(REPORTS_DIR, f"{safe_name}_{timestamp}.txt")
+def _save_report(query: str, report: str):
+
+    safe_name = "".join(c if c.isalnum() else "_" for c in query.lower())[:50]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    filepath = os.path.join(REPORTS_DIR, f"{safe_name}_{timestamp}.txt")
 
     with open(filepath, "w", encoding="utf-8") as f:
-        f.write(f"Research Query: {query}\n")
-        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write("=" * 60 + "\n\n")
         f.write(report)
 
-    print(f"\n  💾 Report saved: {filepath}")
+    print(f"💾 Report saved: {filepath}")

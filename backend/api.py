@@ -16,6 +16,7 @@ import asyncio
 
 from agent.planner import plan_research
 from agent.async_searcher import search_all_async
+from agent.arxiv_searcher import search_arxiv_async
 from agent.extractor import extract_facts_async
 from agent.reporter import generate_report
 from agent.memory import get_cache_stats
@@ -76,25 +77,17 @@ async def quick_search_options():
 async def quick_search(request: ResearchRequest):
     query = request.query
     start = time.time()
-
     system = """You are a knowledgeable AI assistant.
 Answer the question clearly and concisely.
 Structure your answer with:
 - A direct answer (2-3 sentences)
 - Key points (3-5 bullet points)
-- A one-line summary at the end
-Be helpful, accurate, and brief."""
-
-    prompt = f"Answer this question: {query}"
+- A one-line summary at the end"""
     loop   = asyncio.get_event_loop()
-    answer = await loop.run_in_executor(None, ask_ai, prompt, system)
-
+    answer = await loop.run_in_executor(None, ask_ai, f"Answer this: {query}", system)
     return JSONResponse({
-        "query":      query,
-        "answer":     answer,
-        "mode":       "quick",
-        "time_taken": round(time.time() - start, 2),
-        "cost":       "$0.0001"
+        "query": query, "answer": answer,
+        "mode": "quick", "time_taken": round(time.time()-start, 2), "cost": "$0.0001"
     }, headers=CORS_HEADERS)
 
 
@@ -119,23 +112,12 @@ async def docx_options():
 
 @app.post("/export/docx")
 async def export_docx(request: ExportRequest):
-    """Generate and return a .docx Word document."""
-    loop     = asyncio.get_event_loop()
-    docx_bytes = await loop.run_in_executor(
-        None, generate_docx, request.query, request.facts, request.report
-    )
+    loop = asyncio.get_event_loop()
+    docx_bytes = await loop.run_in_executor(None, generate_docx, request.query, request.facts, request.report)
     filename = request.query[:40].replace(" ", "_") + ".docx"
-    return Response(
-        content=docx_bytes,
+    return Response(content=docx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        headers={
-            **CORS_HEADERS,
-            "Content-Disposition": f'attachment; filename="{filename}"'
-        }
-    )
-
-
-# ── PPTX Export ───────────────────────────────────────────────────────────────
+        headers={**CORS_HEADERS, "Content-Disposition": f'attachment; filename="{filename}"'})
 
 @app.options("/export/pptx")
 async def pptx_options():
@@ -143,20 +125,12 @@ async def pptx_options():
 
 @app.post("/export/pptx")
 async def export_pptx(request: ExportRequest):
-    """Generate and return a .pptx PowerPoint presentation."""
-    loop       = asyncio.get_event_loop()
-    pptx_bytes = await loop.run_in_executor(
-        None, generate_pptx, request.query, request.facts, request.report
-    )
+    loop = asyncio.get_event_loop()
+    pptx_bytes = await loop.run_in_executor(None, generate_pptx, request.query, request.facts, request.report)
     filename = request.query[:40].replace(" ", "_") + ".pptx"
-    return Response(
-        content=pptx_bytes,
+    return Response(content=pptx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        headers={
-            **CORS_HEADERS,
-            "Content-Disposition": f'attachment; filename="{filename}"'
-        }
-    )
+        headers={**CORS_HEADERS, "Content-Disposition": f'attachment; filename="{filename}"'})
 
 
 # ── Report cache helpers ──────────────────────────────────────────────────────
@@ -173,8 +147,8 @@ def _load_cached_report(query: str) -> str | None:
     return None
 
 def _save_report_cache(query: str, report: str) -> None:
-    path = _get_report_cache_path(query)
-    with open(path, "w", encoding="utf-8") as f:
+    os.makedirs("cache", exist_ok=True)
+    with open(_get_report_cache_path(query), "w", encoding="utf-8") as f:
         f.write(report)
 
 
@@ -193,12 +167,19 @@ async def research_stream(request: ResearchRequest):
         timings   = {}
 
         try:
+            # ── Phase 1 — Plan (now detects query type) ──────────────
             t = time.time()
             yield send("phase", {"phase": 1, "message": "Planning research..."})
             await asyncio.sleep(0.1)
-            plan = plan_research(query)
+            plan       = plan_research(query)
+            query_type = plan.get("QUERY_TYPE", "market")  # ← NEW
             timings["plan"] = round(time.time() - t, 2)
-            yield send("plan", {"subtopics": plan["SUBTOPICS"], "searches": plan["SEARCHES"]})
+
+            yield send("plan", {
+                "subtopics":  plan["SUBTOPICS"],
+                "searches":   plan["SEARCHES"],
+                "query_type": query_type,           # ← send to frontend
+            })
 
             prior_memory = load_memory(query)
             if prior_memory:
@@ -207,35 +188,49 @@ async def research_stream(request: ResearchRequest):
                     "companies": len(prior_memory.get("companies", []))
                 })
 
+            # ── Phase 2 — Search (Tavily + ArXiv in parallel) ────────
             t = time.time()
-            yield send("phase", {"phase": 2, "message": "Searching web..."})
+            yield send("phase", {"phase": 2, "message": "Searching web + ArXiv papers..."})
             await asyncio.sleep(0.1)
-            results       = await search_all_async(plan["SEARCHES"])
+
+            tavily_task = search_all_async(plan["SEARCHES"])
+            arxiv_task  = search_arxiv_async(plan["SEARCHES"])
+            results, papers = await asyncio.gather(tavily_task, arxiv_task)
+
             total_results = sum(len(r) for r in results.values())
             timings["search"] = round(time.time() - t, 2)
-            yield send("search_done", {"queries": len(results), "results": total_results})
+            yield send("search_done", {
+                "queries": len(results),
+                "results": total_results,
+                "papers":  len(papers),
+            })
 
+            if papers:
+                yield send("arxiv_papers", {"papers": papers})
+
+            # ── Phase 3 — Extract (type-aware!) ──────────────────────
             t = time.time()
-            yield send("phase", {"phase": 3, "message": "Extracting facts in parallel..."})
+            yield send("phase", {"phase": 3, "message": f"Extracting {query_type} data..."})
             await asyncio.sleep(0.1)
-            facts = await extract_facts_async(results)
+
+            # Pass query_type so extractor knows what structure to use
+            facts = await extract_facts_async(results, query_type)
             timings["extract"] = round(time.time() - t, 2)
 
-            if prior_memory:
+            # Only merge memory for market queries
+            if prior_memory and query_type == "market":
                 facts = _merge_memories(prior_memory, facts)
                 yield send("memory_merged", {
                     "message":         "Merged with prior knowledge",
                     "total_companies": len(facts.get("companies", []))
                 })
 
-            yield send("facts", {
-                "companies":    facts.get("companies",    []),
-                "market_facts": facts.get("market_facts", []),
-                "challenges":   facts.get("challenges",   [])
-            })
+            # Send facts with query_type so frontend renders correctly
+            yield send("facts", {**facts, "query_type": query_type})
 
             save_memory(query, facts)
 
+            # ── Phase 4 — Cache ───────────────────────────────────────
             yield send("phase", {"phase": 4, "message": "Saving to memory..."})
             await asyncio.sleep(0.1)
             cache_data  = get_cache_stats()
@@ -246,6 +241,7 @@ async def research_stream(request: ResearchRequest):
                 "total_companies": memory_data["total_companies"]
             })
 
+            # ── Phase 5 — Report ─────────────────────────────────────
             t = time.time()
             yield send("phase", {"phase": 5, "message": "Generating report..."})
             await asyncio.sleep(0.1)
@@ -271,8 +267,10 @@ async def research_stream(request: ResearchRequest):
                 "timings":        timings,
                 "total_time":     total_time,
                 "total_searches": len(plan["SEARCHES"]),
+                "papers_found":   len(papers),
                 "estimated_cost": estimated_cost,
-                "memory_topics":  memory_data["topics"]
+                "memory_topics":  memory_data["topics"],
+                "query_type":     query_type,
             })
 
         except Exception as e:
@@ -281,9 +279,5 @@ async def research_stream(request: ResearchRequest):
     return StreamingResponse(
         generate(),
         media_type="text/event-stream",
-        headers={
-            **CORS_HEADERS,
-            "Cache-Control":     "no-cache",
-            "X-Accel-Buffering": "no"
-        }
+        headers={**CORS_HEADERS, "Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     )

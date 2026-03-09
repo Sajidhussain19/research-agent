@@ -22,6 +22,7 @@
             --yellow: #ffd166;
             --red: #ff4d6d;
             --purple: #c084fc;
+            --paper: #818cf8;
             --text: #dce8f0;
             --muted: #4a6070;
             --font-heading: 'Syne', sans-serif;
@@ -60,6 +61,7 @@
             padding: 60px 24px 80px;
         }
 
+        /* Header */
         .header {
             margin-bottom: 40px;
         }
@@ -102,6 +104,7 @@
             letter-spacing: 0.05em;
         }
 
+        /* Tabs */
         .tabs {
             display: flex;
             margin-bottom: 36px;
@@ -133,6 +136,7 @@
             border-bottom-color: var(--accent);
         }
 
+        /* Mode toggle */
         .mode-toggle {
             display: flex;
             margin-bottom: 20px;
@@ -170,6 +174,45 @@
             color: var(--text);
         }
 
+        /* Query type badge */
+        .qtype-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .qtype-market {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: var(--accent);
+        }
+
+        .qtype-concept {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--green);
+        }
+
+        .qtype-research {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            color: var(--paper);
+        }
+
+        .qtype-mixed {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            color: var(--yellow);
+        }
+
+        /* Suggest banner */
         .suggest-banner {
             padding: 10px 16px;
             background: rgba(192, 132, 252, 0.08);
@@ -193,13 +236,13 @@
             font-family: var(--font-mono);
             font-size: 0.72rem;
             cursor: pointer;
-            white-space: nowrap;
         }
 
         .suggest-btn:hover {
             background: rgba(192, 132, 252, 0.25);
         }
 
+        /* Search bar */
         .search-wrap {
             display: flex;
             margin-bottom: 36px;
@@ -247,7 +290,6 @@
             font-size: 0.9rem;
             border: none;
             cursor: pointer;
-            letter-spacing: 0.05em;
             transition: opacity 0.15s;
             white-space: nowrap;
         }
@@ -265,54 +307,7 @@
             opacity: 0.85;
         }
 
-        .quick-card {
-            background: var(--surface);
-            border: 1px solid rgba(192, 132, 252, 0.3);
-            border-radius: 6px;
-            padding: 28px;
-            margin-bottom: 20px;
-            animation: fadeUp 0.4s ease both;
-        }
-
-        .quick-label {
-            font-size: 0.68rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--purple);
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quick-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(192, 132, 252, 0.2);
-        }
-
-        .quick-answer {
-            white-space: pre-wrap;
-            font-size: 0.85rem;
-            line-height: 1.9;
-            color: var(--text);
-        }
-
-        .quick-meta {
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            font-size: 0.72rem;
-            color: var(--muted);
-            display: flex;
-            gap: 16px;
-        }
-
-        .quick-meta span {
-            color: var(--purple);
-        }
-
+        /* Phases */
         .phases {
             display: flex;
             gap: 6px;
@@ -356,6 +351,7 @@
             }
         }
 
+        /* Cards */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -395,6 +391,39 @@
             background: var(--border);
         }
 
+        .card-label.green {
+            color: var(--green);
+        }
+
+        .card-label.green::after {
+            background: rgba(0, 255, 136, 0.15);
+        }
+
+        .card-label.paper {
+            color: var(--paper);
+        }
+
+        .card-label.paper::after {
+            background: rgba(129, 140, 248, 0.15);
+        }
+
+        .card-label.yellow {
+            color: var(--yellow);
+        }
+
+        .card-label.yellow::after {
+            background: rgba(255, 209, 102, 0.15);
+        }
+
+        .card-label.red {
+            color: var(--red);
+        }
+
+        .card-label.red::after {
+            background: rgba(255, 77, 109, 0.15);
+        }
+
+        /* Market — company grid */
         .company-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -439,57 +468,276 @@
             flex: 1;
         }
 
-        .evidence {
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
+        /* Concept cards */
+        .definition-box {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .analogy-box {
+            background: rgba(255, 209, 102, 0.05);
+            border: 1px solid rgba(255, 209, 102, 0.2);
+            border-radius: 5px;
+            padding: 14px 18px;
+            margin-top: 12px;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: var(--yellow);
+            font-style: italic;
+        }
+
+        .how-list {
+            list-style: none;
+            counter-reset: steps;
+        }
+
+        .how-list li {
+            counter-increment: steps;
+            padding: 12px 0 12px 40px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .how-list li:last-child {
+            border: none;
+        }
+
+        .how-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 50%;
+            color: var(--accent);
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .confidence {
-            font-size: 0.62rem;
-            padding: 2px 7px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            justify-content: center;
             font-weight: 700;
-            flex-shrink: 0;
         }
 
-        .confidence-high {
-            background: rgba(0, 255, 136, 0.15);
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 10px;
+        }
+
+        .component-card {
+            background: var(--bg);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 5px;
+            padding: 14px 16px;
+        }
+
+        .component-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .component-desc {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .use-case-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .use-case-tag {
+            font-size: 0.75rem;
+            padding: 5px 14px;
+            background: rgba(0, 255, 136, 0.07);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 20px;
             color: var(--green);
         }
 
-        .confidence-medium {
-            background: rgba(255, 209, 102, 0.15);
-            color: var(--yellow);
+        .misconception-list {
+            list-style: none;
         }
 
-        .confidence-low {
-            background: rgba(255, 77, 109, 0.15);
+        .misconception-list li {
+            padding: 10px 0 10px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+            color: var(--muted);
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .misconception-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
             color: var(--red);
+            font-weight: 700;
         }
 
-        .source-link {
-            font-size: 0.70rem;
-            color: var(--accent);
+        .misconception-list li:last-child {
+            border: none;
+        }
+
+        /* Research cards */
+        .finding-list {
+            list-style: none;
+        }
+
+        .finding-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .finding-list li:last-child {
+            border: none;
+        }
+
+        .benchmark-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .benchmark-card {
+            background: var(--bg);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 5px;
+            padding: 14px;
+        }
+
+        .benchmark-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--paper);
+            margin-bottom: 4px;
+        }
+
+        .benchmark-result {
+            font-size: 0.9rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* ArXiv paper cards */
+        .paper-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .paper-card {
+            background: var(--bg);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 5px;
+            padding: 16px 18px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .paper-card:hover {
+            border-color: var(--paper);
+            transform: translateY(-1px);
+        }
+
+        .paper-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .paper-authors {
+            font-size: 0.75rem;
+            color: var(--paper);
+            margin-bottom: 6px;
+        }
+
+        .paper-summary {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .paper-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .paper-date {
+            font-size: 0.68rem;
+            color: var(--muted);
+        }
+
+        .paper-category {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.25);
+            border-radius: 3px;
+            color: var(--paper);
+            text-transform: uppercase;
+        }
+
+        .paper-links {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .paper-link {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 3px;
             text-decoration: none;
-            opacity: 0.75;
-            transition: opacity 0.2s;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 190px;
+            transition: background 0.15s;
         }
 
-        .source-link:hover {
-            opacity: 1;
-            text-decoration: underline;
+        .paper-link-abs {
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            color: var(--paper);
         }
 
+        .paper-link-abs:hover {
+            background: rgba(129, 140, 248, 0.1);
+        }
+
+        .paper-link-pdf {
+            background: rgba(129, 140, 248, 0.15);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            color: #fff;
+        }
+
+        .paper-link-pdf:hover {
+            background: rgba(129, 140, 248, 0.28);
+        }
+
+        /* Fact list (shared) */
         .fact-list {
             list-style: none;
         }
@@ -527,14 +775,58 @@
             gap: 6px;
         }
 
-        .report-content {
-            white-space: pre-wrap;
-            font-size: 0.83rem;
-            line-height: 1.9;
-            color: #bcd0dc;
+        /* Evidence */
+        .evidence {
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        /* ── Download row ── */
+        .confidence {
+            font-size: 0.62rem;
+            padding: 2px 7px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+        }
+
+        .confidence-high {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--green);
+        }
+
+        .confidence-medium {
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--yellow);
+        }
+
+        .confidence-low {
+            background: rgba(255, 77, 109, 0.15);
+            color: var(--red);
+        }
+
+        .source-link {
+            font-size: 0.70rem;
+            color: var(--accent);
+            text-decoration: none;
+            opacity: 0.75;
+            transition: opacity 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 190px;
+        }
+
+        .source-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Downloads */
         .download-row {
             display: flex;
             gap: 10px;
@@ -600,6 +892,58 @@
             background: rgba(192, 132, 252, 0.08);
         }
 
+        /* Misc */
+        .quick-card {
+            background: var(--surface);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 6px;
+            padding: 28px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .quick-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--purple);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(192, 132, 252, 0.2);
+        }
+
+        .quick-answer {
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+            line-height: 1.9;
+            color: var(--text);
+        }
+
+        .quick-meta {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: var(--muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        .report-content {
+            white-space: pre-wrap;
+            font-size: 0.83rem;
+            line-height: 1.9;
+            color: #bcd0dc;
+        }
+
         .cache-row {
             margin-bottom: 20px;
         }
@@ -614,7 +958,6 @@
             border-radius: 3px;
             font-size: 0.72rem;
             color: var(--muted);
-            letter-spacing: 0.05em;
         }
 
         .searches {
@@ -642,11 +985,6 @@
             animation: spin 0.7s linear infinite;
         }
 
-        .spinner-light {
-            border-color: rgba(255, 255, 255, 0.2);
-            border-top-color: currentColor;
-        }
-
         @keyframes spin {
             to {
                 transform: rotate(360deg)
@@ -671,7 +1009,6 @@
             color: var(--green);
             font-size: 0.85rem;
             margin-bottom: 20px;
-            letter-spacing: 0.05em;
         }
 
         .memory-banner {
@@ -755,7 +1092,6 @@
             color: var(--text);
             width: 45px;
             text-align: right;
-            flex-shrink: 0;
         }
 
         .topic-row {
@@ -799,6 +1135,21 @@
             font-size: 0.85rem;
             line-height: 2;
         }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .plain-tag {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            background: rgba(255, 209, 102, 0.07);
+            border: 1px solid rgba(255, 209, 102, 0.2);
+            border-radius: 3px;
+            color: var(--yellow);
+        }
     </style>
 </head>
 
@@ -808,163 +1159,256 @@
         const { useState, useEffect, useRef } = React;
 
         const PHASES = [
-            { id: 1, label: "01 PLAN" },
-            { id: 2, label: "02 SEARCH" },
-            { id: 3, label: "03 EXTRACT" },
-            { id: 4, label: "04 CACHE" },
-            { id: 5, label: "05 REPORT" },
+            { id: 1, label: "01 PLAN" }, { id: 2, label: "02 SEARCH" },
+            { id: 3, label: "03 EXTRACT" }, { id: 4, label: "04 CACHE" }, { id: 5, label: "05 REPORT" },
         ];
-
         const API_BASE = "https://research-agent-heod.onrender.com";
 
-        // ── Download helpers ──────────────────────────────────────────────────────────
-
+        // ── Downloads ─────────────────────────────────────────────────────────────────
         function downloadTXT(query, report) {
-            const content = [`Research Query: ${query}`, `Generated: ${new Date().toLocaleString()}`, "=".repeat(60), "", report].join("\n");
-            const blob = new Blob([content], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = query.slice(0, 40).replace(/\s+/g, "_") + ".txt";
-            a.click(); URL.revokeObjectURL(url);
+            const blob = new Blob([[`Research Query: ${query}`, `Generated: ${new Date().toLocaleString()}`, "=".repeat(60), "", report].join("\n")], { type: "text/plain" });
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+            a.download = query.slice(0, 40).replace(/\s+/g, "_") + ".txt"; a.click();
         }
-
         function downloadPDF(query, report) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ unit: "mm", format: "a4" });
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
             doc.setFillColor(8, 11, 15); doc.rect(0, 0, 210, 297, "F");
             doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(0, 229, 255);
-            const titleLines = doc.splitTextToSize(query, 175);
-            doc.text(titleLines, 15, 20);
-            const th = titleLines.length * 8;
+            const tl = doc.splitTextToSize(query, 175); doc.text(tl, 15, 20);
+            const th = tl.length * 8;
             doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(74, 96, 112);
-            doc.text(`Generated: ${new Date().toLocaleString()}  ·  AI Research Agent`, 15, 20 + th + 4);
+            doc.text(`Generated: ${new Date().toLocaleString()} · AI Research Agent`, 15, 20 + th + 4);
             doc.setDrawColor(0, 229, 255); doc.setLineWidth(0.3); doc.line(15, 20 + th + 10, 195, 20 + th + 10);
-            doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(220, 232, 240);
-            const bodyLines = doc.splitTextToSize(report, 180);
-            doc.text(bodyLines, 15, 20 + th + 18);
+            doc.setFontSize(10); doc.setTextColor(220, 232, 240);
+            doc.text(doc.splitTextToSize(report, 180), 15, 20 + th + 18);
             doc.save(query.slice(0, 40).replace(/\s+/g, "_") + ".pdf");
         }
-
         async function downloadFromBackend(endpoint, query, facts, report, filename) {
-            const res = await fetch(`${API_BASE}${endpoint}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query, facts, report })
-            });
+            const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query, facts, report }) });
             if (!res.ok) throw new Error(`Export failed: ${res.status}`);
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = filename;
-            a.click(); URL.revokeObjectURL(url);
+            const blob = await res.blob(); const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob); a.download = filename; a.click();
         }
 
-        // ── Sub-components ────────────────────────────────────────────────────────────
-
+        // ── Shared components ─────────────────────────────────────────────────────────
         function Evidence({ ev }) {
             if (!ev) return null;
-            const conf = ev.confidence || "medium";
-            const title = ev.source_title || ev.source_url || "";
-            return (
-                <div className="evidence">
-                    <span className={`confidence confidence-${conf}`}>{conf}</span>
-                    {ev.source_url
-                        ? <a className="source-link" href={ev.source_url} target="_blank" rel="noreferrer">↗ {title.slice(0, 38)}{title.length > 38 ? "…" : ""}</a>
-                        : title ? <span className="source-link" style={{ cursor: "default" }}>{title.slice(0, 40)}</span> : null
-                    }
-                </div>
-            );
+            const conf = ev.confidence || "medium"; const title = ev.source_title || ev.source_url || "";
+            return (<div className="evidence">
+                <span className={`confidence confidence-${conf}`}>{conf}</span>
+                {ev.source_url ? <a className="source-link" href={ev.source_url} target="_blank" rel="noreferrer">↗ {title.slice(0, 38)}{title.length > 38 ? "…" : ""}</a> : null}
+            </div>);
         }
 
+        function PaperCard({ paper }) {
+            return (<div className="paper-card">
+                <div className="paper-title">{paper.title}</div>
+                <div className="paper-authors">👤 {paper.authors}</div>
+                <div className="paper-summary">{paper.summary}</div>
+                <div className="paper-footer">
+                    <span className="paper-date">📅 {paper.published}</span>
+                    {paper.category && <span className="paper-category">{paper.category}</span>}
+                    <div className="paper-links">
+                        <a className="paper-link paper-link-abs" href={paper.url} target="_blank" rel="noreferrer">Abstract</a>
+                        {paper.pdf_url && <a className="paper-link paper-link-pdf" href={paper.pdf_url} target="_blank" rel="noreferrer">↓ PDF</a>}
+                    </div>
+                </div>
+            </div>);
+        }
+
+        // ── Market results ────────────────────────────────────────────────────────────
+        function MarketResults({ facts }) {
+            const companies = facts.companies || [];
+            const mfacts = facts.market_facts || [];
+            const challenges = facts.challenges || [];
+            return (<>
+                {companies.length > 0 && <div className="card">
+                    <div className="card-label">Key Companies ({companies.length})</div>
+                    <div className="company-grid">
+                        {companies.map((c, i) => (
+                            <div key={i} className="company-card">
+                                <div className="company-name">{c.name}</div>
+                                <div className="company-focus">{c.focus}</div>
+                                <div className="company-fact">{c.key_fact}</div>
+                                <Evidence ev={c.evidence} />
+                            </div>
+                        ))}
+                    </div>
+                </div>}
+                {mfacts.length > 0 && <div className="card">
+                    <div className="card-label">Market Overview</div>
+                    <ul className="fact-list">
+                        {mfacts.map((f, i) => (
+                            <li key={i}><span className="fact-arrow">→</span>
+                                <div className="fact-body"><span>{f.fact || f}</span>
+                                    {f.evidence && <div className="fact-source"><span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>{f.evidence.confidence}</span>{f.evidence.source_url && <a className="source-link" href={f.evidence.source_url} target="_blank" rel="noreferrer">↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}</a>}</div>}
+                                </div></li>
+                        ))}
+                    </ul>
+                </div>}
+                {challenges.length > 0 && <div className="card">
+                    <div className="card-label red">Challenges</div>
+                    <ul className="fact-list">
+                        {challenges.map((c, i) => (
+                            <li key={i}><span className="fact-arrow" style={{ color: "var(--red)" }}>→</span>
+                                <div className="fact-body"><span>{c.challenge || c}</span>
+                                    {c.evidence && <div className="fact-source"><span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>{c.evidence.confidence}</span>{c.evidence.source_url && <a className="source-link" href={c.evidence.source_url} target="_blank" rel="noreferrer">↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 45)}</a>}</div>}
+                                </div></li>
+                        ))}
+                    </ul>
+                </div>}
+            </>);
+        }
+
+        // ── Concept results ───────────────────────────────────────────────────────────
+        function ConceptResults({ facts }) {
+            return (<>
+                {facts.definition && <div className="card">
+                    <div className="card-label green">What It Is</div>
+                    <div className="definition-box">{facts.definition}</div>
+                    {facts.simple_analogy && <div className="analogy-box">💡 {facts.simple_analogy}</div>}
+                </div>}
+
+                {(facts.how_it_works || []).length > 0 && <div className="card">
+                    <div className="card-label">How It Works</div>
+                    <ol className="how-list">
+                        {facts.how_it_works.map((step, i) => <li key={i}>{step}</li>)}
+                    </ol>
+                </div>}
+
+                {(facts.key_components || []).length > 0 && <div className="card">
+                    <div className="card-label">Key Components</div>
+                    <div className="component-grid">
+                        {facts.key_components.map((c, i) => (
+                            <div key={i} className="component-card">
+                                <div className="component-name">{c.name}</div>
+                                <div className="component-desc">{c.description}</div>
+                                {c.evidence?.source_url && <div style={{ marginTop: 8 }}><a className="source-link" href={c.evidence.source_url} target="_blank" rel="noreferrer">↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 40)}</a></div>}
+                            </div>
+                        ))}
+                    </div>
+                </div>}
+
+                {(facts.use_cases || []).length > 0 && <div className="card">
+                    <div className="card-label yellow">Use Cases</div>
+                    <div className="use-case-grid">
+                        {facts.use_cases.map((u, i) => <span key={i} className="use-case-tag">{u}</span>)}
+                    </div>
+                </div>}
+
+                {(facts.common_misconceptions || []).length > 0 && <div className="card">
+                    <div className="card-label red">Common Misconceptions</div>
+                    <ul className="misconception-list">
+                        {facts.common_misconceptions.map((m, i) => <li key={i}>{m}</li>)}
+                    </ul>
+                </div>}
+            </>);
+        }
+
+        // ── Research results ──────────────────────────────────────────────────────────
+        function ResearchResults({ facts }) {
+            return (<>
+                {(facts.key_findings || []).length > 0 && <div className="card">
+                    <div className="card-label paper">Key Findings</div>
+                    <ul className="finding-list">
+                        {facts.key_findings.map((f, i) => (
+                            <li key={i}><span className="fact-arrow" style={{ color: "var(--paper)" }}>→</span>
+                                <div className="fact-body"><span>{f.finding || f}</span>
+                                    {f.evidence && <div className="fact-source"><span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>{f.evidence.confidence}</span>{f.evidence.source_url && <a className="source-link" href={f.evidence.source_url} target="_blank" rel="noreferrer">↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}</a>}</div>}
+                                </div></li>
+                        ))}
+                    </ul>
+                </div>}
+
+                {(facts.benchmarks || []).length > 0 && <div className="card">
+                    <div className="card-label yellow">Benchmarks</div>
+                    <div className="benchmark-grid">
+                        {facts.benchmarks.map((b, i) => (
+                            <div key={i} className="benchmark-card">
+                                <div className="benchmark-name">{b.name}</div>
+                                <div className="benchmark-result">{b.result}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>}
+
+                {(facts.methodologies || []).length > 0 && <div className="card">
+                    <div className="card-label green">Methodologies</div>
+                    <div className="tag-row">
+                        {facts.methodologies.map((m, i) => <span key={i} className="plain-tag">{m}</span>)}
+                    </div>
+                </div>}
+
+                {(facts.open_problems || []).length > 0 && <div className="card">
+                    <div className="card-label red">Open Problems</div>
+                    <ul className="fact-list">
+                        {facts.open_problems.map((p, i) => (
+                            <li key={i}><span className="fact-arrow" style={{ color: "var(--red)" }}>→</span><span>{p}</span></li>
+                        ))}
+                    </ul>
+                </div>}
+
+                {(facts.notable_authors || []).length > 0 && <div className="card">
+                    <div className="card-label">Notable Authors</div>
+                    <div className="tag-row">
+                        {facts.notable_authors.map((a, i) => <span key={i} className="use-case-tag" style={{ borderColor: "rgba(0,229,255,0.3)", color: "var(--accent)" }}>{a}</span>)}
+                    </div>
+                </div>}
+            </>);
+        }
+
+        // ── Download row ──────────────────────────────────────────────────────────────
+        function DownloadRow({ query, facts, report }) {
+            const [dL, setDL] = useState(false); const [pL, setPL] = useState(false);
+            async function handleDocx() { setDL(true); try { await downloadFromBackend("/export/docx", query, facts, report, query.slice(0, 40).replace(/\s+/g, "_") + ".docx"); } catch (e) { alert(e.message); } setDL(false); }
+            async function handlePptx() { setPL(true); try { await downloadFromBackend("/export/pptx", query, facts, report, query.slice(0, 40).replace(/\s+/g, "_") + ".pptx"); } catch (e) { alert(e.message); } setPL(false); }
+            return (<div className="download-row">
+                <button className="dl-btn dl-btn-txt" onClick={() => downloadTXT(query, report)}>↓ TXT</button>
+                <button className="dl-btn dl-btn-pdf" onClick={() => downloadPDF(query, report)}>↓ PDF</button>
+                <button className="dl-btn dl-btn-docx" onClick={handleDocx} disabled={dL}>{dL ? "generating…" : "↓ Word"}</button>
+                <button className="dl-btn dl-btn-pptx" onClick={handlePptx} disabled={pL}>{pL ? "generating…" : "↓ PowerPoint"}</button>
+            </div>);
+        }
+
+        // ── Dashboard ─────────────────────────────────────────────────────────────────
         function TimingBar({ label, value, max }) {
-            const pct = max > 0 ? Math.round((value / max) * 100) : 0;
-            return (
-                <div className="timing-row">
-                    <span className="timing-label">{label}</span>
-                    <div className="timing-bar-wrap"><div className="timing-bar" style={{ width: `${pct}%` }} /></div>
-                    <span className="timing-value">{value}s</span>
-                </div>
-            );
+            return (<div className="timing-row">
+                <span className="timing-label">{label}</span>
+                <div className="timing-bar-wrap"><div className="timing-bar" style={{ width: `${max > 0 ? Math.round(value / max * 100) : 0}%` }} /></div>
+                <span className="timing-value">{value}s</span>
+            </div>);
         }
-
         function Dashboard({ runData }) {
             if (!runData) return <div className="empty-state">No run data yet.<br />Run a research query first.</div>;
-            const { timings, total_time, total_searches, estimated_cost, memory_topics } = runData;
-            const maxTiming = Math.max(...Object.values(timings || {}), 0.1);
-            return (
-                <div>
-                    <div className="card">
-                        <div className="card-label">Run Summary</div>
-                        <div className="obs-grid">
-                            <div className="obs-stat"><span className="obs-stat-label">Total Time</span><span className="obs-stat-value">{total_time}s</span><span className="obs-stat-sub">end to end</span></div>
-                            <div className="obs-stat"><span className="obs-stat-label">Searches</span><span className="obs-stat-value">{total_searches}</span><span className="obs-stat-sub">async parallel</span></div>
-                            <div className="obs-stat"><span className="obs-stat-label">Est. Cost</span><span className="obs-stat-value" style={{ fontSize: "1.4rem" }}>${estimated_cost}</span><span className="obs-stat-sub">gpt-4o-mini</span></div>
-                            <div className="obs-stat"><span className="obs-stat-label">Memory Topics</span><span className="obs-stat-value">{(memory_topics || []).length}</span><span className="obs-stat-sub">topics known</span></div>
-                        </div>
-                    </div>
-                    {timings && Object.keys(timings).length > 0 && (
-                        <div className="card">
-                            <div className="card-label">Phase Timings</div>
-                            {Object.entries(timings).map(([phase, val]) => <TimingBar key={phase} label={phase} value={val} max={maxTiming} />)}
-                        </div>
-                    )}
-                    <div className="card">
-                        <div className="card-label">Agent Knowledge Base</div>
-                        {(memory_topics || []).length === 0
-                            ? <div style={{ color: "var(--muted)", fontSize: "0.85rem" }}>No topics in memory yet.</div>
-                            : (memory_topics || []).map((t, i) => (
-                                <div key={i} className="topic-row">
-                                    <span className="topic-name">{t.topic?.slice(0, 55)}</span>
-                                    <span className="topic-badge">{t.companies} companies</span>
-                                    <span className="topic-runs">{t.access_count}× runs</span>
-                                </div>
-                            ))
-                        }
+            const { timings, total_time, total_searches, estimated_cost, memory_topics, papers_found, query_type } = runData;
+            const maxT = Math.max(...Object.values(timings || {}), 0.1);
+            return (<div>
+                <div className="card">
+                    <div className="card-label">Run Summary</div>
+                    <div className="obs-grid">
+                        <div className="obs-stat"><span className="obs-stat-label">Total Time</span><span className="obs-stat-value">{total_time}s</span><span className="obs-stat-sub">end to end</span></div>
+                        <div className="obs-stat"><span className="obs-stat-label">Web Searches</span><span className="obs-stat-value">{total_searches}</span><span className="obs-stat-sub">async parallel</span></div>
+                        <div className="obs-stat"><span className="obs-stat-label">Papers Found</span><span className="obs-stat-value" style={{ color: "var(--paper)" }}>{papers_found || 0}</span><span className="obs-stat-sub">from ArXiv</span></div>
+                        <div className="obs-stat"><span className="obs-stat-label">Query Type</span><span className="obs-stat-value" style={{ fontSize: "1.1rem", textTransform: "uppercase" }}>{query_type || "market"}</span><span className="obs-stat-sub">detected automatically</span></div>
                     </div>
                 </div>
-            );
-        }
-
-        // ── Download Buttons ──────────────────────────────────────────────────────────
-
-        function DownloadRow({ query, facts, report }) {
-            const [docxLoading, setDocxLoading] = useState(false);
-            const [pptxLoading, setPptxLoading] = useState(false);
-
-            async function handleDocx() {
-                setDocxLoading(true);
-                try {
-                    const filename = query.slice(0, 40).replace(/\s+/g, "_") + ".docx";
-                    await downloadFromBackend("/export/docx", query, facts, report, filename);
-                } catch (e) { alert("DOCX export failed: " + e.message); }
-                setDocxLoading(false);
-            }
-
-            async function handlePptx() {
-                setPptxLoading(true);
-                try {
-                    const filename = query.slice(0, 40).replace(/\s+/g, "_") + ".pptx";
-                    await downloadFromBackend("/export/pptx", query, facts, report, filename);
-                } catch (e) { alert("PPTX export failed: " + e.message); }
-                setPptxLoading(false);
-            }
-
-            return (
-                <div className="download-row">
-                    <button className="dl-btn dl-btn-txt" onClick={() => downloadTXT(query, report)}>↓ TXT</button>
-                    <button className="dl-btn dl-btn-pdf" onClick={() => downloadPDF(query, report)}>↓ PDF</button>
-                    <button className="dl-btn dl-btn-docx" onClick={handleDocx} disabled={docxLoading}>
-                        {docxLoading ? "generating…" : "↓ Word"}
-                    </button>
-                    <button className="dl-btn dl-btn-pptx" onClick={handlePptx} disabled={pptxLoading}>
-                        {pptxLoading ? "generating…" : "↓ PowerPoint"}
-                    </button>
+                {timings && <div className="card"><div className="card-label">Phase Timings</div>{Object.entries(timings).map(([p, v]) => <TimingBar key={p} label={p} value={v} max={maxT} />)}</div>}
+                <div className="card">
+                    <div className="card-label">Agent Knowledge Base</div>
+                    {!(memory_topics || []).length ? <div style={{ color: "var(--muted)", fontSize: "0.85rem" }}>No topics yet.</div>
+                        : (memory_topics || []).map((t, i) => (
+                            <div key={i} className="topic-row">
+                                <span className="topic-name">{t.topic?.slice(0, 55)}</span>
+                                <span className="topic-badge">{t.companies} companies</span>
+                                <span className="topic-runs">{t.access_count}× runs</span>
+                            </div>
+                        ))
+                    }
                 </div>
-            );
+            </div>);
         }
 
         // ── Main App ──────────────────────────────────────────────────────────────────
-
         function App() {
             const [activeTab, setActiveTab] = useState("research");
             const [searchMode, setSearchMode] = useState("research");
@@ -973,9 +1417,9 @@
             const [activePhase, setActivePhase] = useState(0);
             const [donePhases, setDonePhases] = useState([]);
             const [plan, setPlan] = useState(null);
-            const [companies, setCompanies] = useState([]);
-            const [marketFacts, setMarketFacts] = useState([]);
-            const [challenges, setChallenges] = useState([]);
+            const [queryType, setQueryType] = useState("market");
+            const [facts, setFacts] = useState(null);
+            const [papers, setPapers] = useState([]);
             const [report, setReport] = useState("");
             const [cacheStats, setCacheStats] = useState(null);
             const [error, setError] = useState("");
@@ -985,18 +1429,15 @@
             const [quickResult, setQuickResult] = useState(null);
             const [suggestion, setSuggestion] = useState(null);
             const classifyTimer = useRef(null);
-
-            // full facts object for export
             const factsRef = useRef({});
 
             function reset() {
-                setActivePhase(0); setDonePhases([]);
-                setPlan(null); setCompanies([]);
-                setMarketFacts([]); setChallenges([]);
-                setReport(""); setCacheStats(null);
-                setError(""); setIsDone(false);
-                setMemoryHit(null); setQuickResult(null);
-                setSuggestion(null); factsRef.current = {};
+                setActivePhase(0); setDonePhases([]); setPlan(null);
+                setQueryType("market"); setFacts(null); setPapers([]);
+                setReport(""); setCacheStats(null); setError("");
+                setIsDone(false); setMemoryHit(null);
+                setQuickResult(null); setSuggestion(null);
+                factsRef.current = {};
             }
 
             useEffect(() => {
@@ -1004,13 +1445,9 @@
                 clearTimeout(classifyTimer.current);
                 classifyTimer.current = setTimeout(async () => {
                     try {
-                        const res = await fetch(`${API_BASE}/search/classify`, {
-                            method: "POST", headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ query: query.trim() })
-                        });
+                        const res = await fetch(`${API_BASE}/search/classify`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: query.trim() }) });
                         const data = await res.json();
-                        if (data.type && data.type !== searchMode) setSuggestion(data);
-                        else setSuggestion(null);
+                        if (data.type && data.type !== searchMode) setSuggestion(data); else setSuggestion(null);
                     } catch { setSuggestion(null); }
                 }, 800);
                 return () => clearTimeout(classifyTimer.current);
@@ -1020,10 +1457,7 @@
                 if (!query.trim() || loading) return;
                 reset(); setLoading(true);
                 try {
-                    const res = await fetch(`${API_BASE}/search/quick`, {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ query: query.trim() })
-                    });
+                    const res = await fetch(`${API_BASE}/search/quick`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: query.trim() }) });
                     const data = await res.json();
                     setQuickResult(data); setIsDone(true);
                 } catch { setError("Could not connect to backend."); }
@@ -1034,25 +1468,15 @@
                 if (!query.trim() || loading) return;
                 reset(); setLoading(true);
                 try {
-                    const res = await fetch(`${API_BASE}/research/stream`, {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ query: query.trim() })
-                    });
+                    const res = await fetch(`${API_BASE}/research/stream`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: query.trim() }) });
                     if (!res.ok) { setError(`Server error: ${res.status}`); setLoading(false); return; }
-
-                    const reader = res.body.getReader();
-                    const decoder = new TextDecoder();
-                    let buffer = "";
-
+                    const reader = res.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
                     while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
+                        const { done, value } = await reader.read(); if (done) break;
                         buffer += decoder.decode(value, { stream: true });
-                        const parts = buffer.split("\n\n");
-                        buffer = parts.pop();
+                        const parts = buffer.split("\n\n"); buffer = parts.pop();
                         for (const part of parts) {
-                            const line = part.trim();
-                            if (!line.startsWith("data: ")) continue;
+                            const line = part.trim(); if (!line.startsWith("data: ")) continue;
                             try {
                                 const { event, data } = JSON.parse(line.slice(6));
                                 switch (event) {
@@ -1060,12 +1484,14 @@
                                         setActivePhase(data.phase);
                                         setDonePhases(prev => [...new Set([...prev, data.phase - 1])].filter(x => x > 0));
                                         break;
-                                    case "plan": setPlan(data); break;
+                                    case "plan":
+                                        setPlan(data);
+                                        if (data.query_type) setQueryType(data.query_type);
+                                        break;
+                                    case "arxiv_papers": setPapers(data.papers || []); break;
                                     case "facts":
-                                        setCompanies(data.companies || []);
-                                        setMarketFacts(data.market_facts || []);
-                                        setChallenges(data.challenges || []);
-                                        factsRef.current = data;  // save for export
+                                        setFacts(data); factsRef.current = data;
+                                        if (data.query_type) setQueryType(data.query_type);
                                         break;
                                     case "cache": setCacheStats(data); break;
                                     case "report": setReport(data.content || ""); break;
@@ -1079,23 +1505,22 @@
                             } catch (e) { console.warn("[SSE]", e); }
                         }
                     }
-                } catch (e) { setError(`Could not connect to backend.`); }
+                } catch (e) { setError("Could not connect to backend."); }
                 setLoading(false);
             }
 
             function handleRun() { searchMode === "quick" ? runQuickSearch() : runResearch(); }
 
+            const qTypeLabel = { market: "🏢 Market", concept: "📖 Concept", research: "🔬 Research", mixed: "🔀 Mixed" };
+            const qTypeClass = { market: "qtype-market", concept: "qtype-concept", research: "qtype-research", mixed: "qtype-mixed" };
             const showProgress = loading || donePhases.length > 0;
-            const placeholder = searchMode === "quick"
-                ? "e.g. What is RAG in AI? How does transformer work?"
-                : "e.g. AI startups in India working on healthcare 2026";
 
             return (
                 <div className="container">
                     <div className="header">
                         <div className="header-tag">AI Research Agent</div>
                         <h1>Research<br /><span>anything.</span></h1>
-                        <p className="subtitle">FOR EVERYONE</p>
+                        <p className="subtitle">Web + ArXiv · Powered by OpenAI + Tavily · Built by you</p>
                     </div>
 
                     <div className="tabs">
@@ -1103,144 +1528,83 @@
                         <button className={`tab ${activeTab === "dashboard" ? "active" : ""}`} onClick={() => setActiveTab("dashboard")}>Observability</button>
                     </div>
 
-                    {activeTab === "research" && (
-                        <div>
-                            <div className="mode-toggle">
-                                <button className={`mode-btn ${searchMode === "research" ? "active-research" : ""}`} onClick={() => { setSearchMode("research"); reset(); }}>🔬 Research</button>
-                                <button className={`mode-btn ${searchMode === "quick" ? "active-quick" : ""}`} onClick={() => { setSearchMode("quick"); reset(); }}>⚡ Quick Search</button>
-                            </div>
-
-                            <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "16px" }}>
-                                {searchMode === "research"
-                                    ? "→ Full agent: web search + extraction + report · 10-20s"
-                                    : "→ Instant AI answer: no web search · 3-5s · best for definitions & explanations"
-                                }
-                            </div>
-
-                            {suggestion && (
-                                <div className="suggest-banner">
-                                    <span>{suggestion.type === "quick" ? "⚡ This looks like a quick question — switch to Quick Search?" : "🔬 This looks like a research topic — switch to Research mode?"}</span>
-                                    <button className="suggest-btn" onClick={() => { setSearchMode(suggestion.type); setSuggestion(null); }}>Switch →</button>
-                                </div>
-                            )}
-
-                            <div className={`search-wrap ${searchMode === "quick" ? "quick-mode" : ""}`}>
-                                <input value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === "Enter" && handleRun()} placeholder={placeholder} disabled={loading} />
-                                <button className={`run-btn ${searchMode === "quick" ? "quick" : ""}`} onClick={handleRun} disabled={loading || !query.trim()}>
-                                    {loading ? <span className="spinner" /> : searchMode === "quick" ? "ASK →" : "RUN →"}
-                                </button>
-                            </div>
-
-                            {error && <div className="error-box">⚠ {error}</div>}
-
-                            {quickResult && (
-                                <div className="quick-card">
-                                    <div className="quick-label">⚡ Quick Answer</div>
-                                    <div className="quick-answer">{quickResult.answer}</div>
-                                    <div className="quick-meta">
-                                        <span>⏱ {quickResult.time_taken}s</span>
-                                        <span>💰 {quickResult.cost}</span>
-                                        <span style={{ color: "var(--muted)" }}>No web search · AI knowledge only</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {searchMode === "research" && (
-                                <>
-                                    {showProgress && (
-                                        <div className="phases">
-                                            {PHASES.map(p => (
-                                                <div key={p.id} className={`phase ${donePhases.includes(p.id) ? "done" : activePhase === p.id ? "active" : ""}`}>
-                                                    {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {memoryHit && <div className="memory-banner">🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory</div>}
-
-                                    {isDone && report && <div className="done-banner">✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · report saved</div>}
-
-                                    {plan && (
-                                        <div className="card">
-                                            <div className="card-label">Research Plan</div>
-                                            <div className="searches">{plan.searches.map((s, i) => <span key={i} className="search-tag">{s}</span>)}</div>
-                                        </div>
-                                    )}
-
-                                    {companies.length > 0 && (
-                                        <div className="card">
-                                            <div className="card-label">Key Companies ({companies.length})</div>
-                                            <div className="company-grid">
-                                                {companies.map((c, i) => (
-                                                    <div key={i} className="company-card">
-                                                        <div className="company-name">{c.name}</div>
-                                                        <div className="company-focus">{c.focus}</div>
-                                                        <div className="company-fact">{c.key_fact}</div>
-                                                        <Evidence ev={c.evidence} />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {marketFacts.length > 0 && (
-                                        <div className="card">
-                                            <div className="card-label">Market Overview</div>
-                                            <ul className="fact-list">
-                                                {marketFacts.map((f, i) => (
-                                                    <li key={i}>
-                                                        <span className="fact-arrow">→</span>
-                                                        <div className="fact-body">
-                                                            <span>{f.fact || f}</span>
-                                                            {f.evidence && <div className="fact-source">
-                                                                <span className={`confidence confidence-${f.evidence.confidence || "medium"}`}>{f.evidence.confidence}</span>
-                                                                {f.evidence.source_url && <a className="source-link" href={f.evidence.source_url} target="_blank" rel="noreferrer">↗ {(f.evidence.source_title || f.evidence.source_url).slice(0, 45)}</a>}
-                                                            </div>}
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-
-                                    {challenges.length > 0 && (
-                                        <div className="card">
-                                            <div className="card-label">Challenges</div>
-                                            <ul className="fact-list">
-                                                {challenges.map((c, i) => (
-                                                    <li key={i}>
-                                                        <span className="fact-arrow">→</span>
-                                                        <div className="fact-body">
-                                                            <span>{c.challenge || c}</span>
-                                                            {c.evidence && <div className="fact-source">
-                                                                <span className={`confidence confidence-${c.evidence.confidence || "medium"}`}>{c.evidence.confidence}</span>
-                                                                {c.evidence.source_url && <a className="source-link" href={c.evidence.source_url} target="_blank" rel="noreferrer">↗ {(c.evidence.source_title || c.evidence.source_url).slice(0, 45)}</a>}
-                                                            </div>}
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-
-                                    {cacheStats && (
-                                        <div className="cache-row">
-                                            <span className="cache-badge">◆ {cacheStats.cached_queries} queries cached · {cacheStats.cache_size_kb}kb · {cacheStats.total_topics || 0} memory topics</span>
-                                        </div>
-                                    )}
-
-                                    {report && (
-                                        <div className="card">
-                                            <div className="card-label">Full Report</div>
-                                            <div className="report-content">{report}</div>
-                                            <DownloadRow query={query} facts={factsRef.current} report={report} />
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                    {activeTab === "research" && (<div>
+                        <div className="mode-toggle">
+                            <button className={`mode-btn ${searchMode === "research" ? "active-research" : ""}`} onClick={() => { setSearchMode("research"); reset(); }}>🔬 Research</button>
+                            <button className={`mode-btn ${searchMode === "quick" ? "active-quick" : ""}`} onClick={() => { setSearchMode("quick"); reset(); }}>⚡ Quick Search</button>
                         </div>
-                    )}
+
+                        <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "16px" }}>
+                            {searchMode === "research" ? "→ Full agent: web + ArXiv + type-aware extraction · 10-20s" : "→ Instant AI answer · no web search · 3-5s"}
+                        </div>
+
+                        {suggestion && (<div className="suggest-banner">
+                            <span>{suggestion.type === "quick" ? "⚡ This looks like a quick question — switch to Quick Search?" : "🔬 This looks like a research topic — switch to Research mode?"}</span>
+                            <button className="suggest-btn" onClick={() => { setSearchMode(suggestion.type); setSuggestion(null); }}>Switch →</button>
+                        </div>)}
+
+                        <div className={`search-wrap ${searchMode === "quick" ? "quick-mode" : ""}`}>
+                            <input value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === "Enter" && handleRun()}
+                                placeholder={searchMode === "quick" ? "e.g. What is RAG in AI?" : "e.g. AI startups in India 2026  /  how does transformer work  /  latest LLM benchmarks"}
+                                disabled={loading} />
+                            <button className={`run-btn ${searchMode === "quick" ? "quick" : ""}`} onClick={handleRun} disabled={loading || !query.trim()}>
+                                {loading ? <span className="spinner" /> : searchMode === "quick" ? "ASK →" : "RUN →"}
+                            </button>
+                        </div>
+
+                        {error && <div className="error-box">⚠ {error}</div>}
+
+                        {quickResult && (<div className="quick-card">
+                            <div className="quick-label">⚡ Quick Answer</div>
+                            <div className="quick-answer">{quickResult.answer}</div>
+                            <div className="quick-meta"><span>⏱ {quickResult.time_taken}s</span><span>💰 {quickResult.cost}</span><span style={{ color: "var(--muted)" }}>No web search · AI only</span></div>
+                        </div>)}
+
+                        {searchMode === "research" && (<>
+                            {showProgress && (<div className="phases">
+                                {PHASES.map(p => (
+                                    <div key={p.id} className={`phase ${donePhases.includes(p.id) ? "done" : activePhase === p.id ? "active" : ""}`}>
+                                        {donePhases.includes(p.id) ? "✓ " : ""}{p.label}
+                                    </div>
+                                ))}
+                            </div>)}
+
+                            {/* Query type badge — shows as soon as plan is received */}
+                            {plan && (<div className={`qtype-badge ${qTypeClass[queryType] || "qtype-market"}`}>
+                                {qTypeLabel[queryType] || "🏢 Market"} — detected automatically
+                            </div>)}
+
+                            {memoryHit && <div className="memory-banner">🧠 {memoryHit.message} — {memoryHit.companies || memoryHit.total_companies} companies in memory</div>}
+                            {isDone && report && <div className="done-banner">✓ Research complete — {runData?.total_time}s · ${runData?.estimated_cost} · {runData?.papers_found || 0} papers · type: {queryType}</div>}
+
+                            {plan && (<div className="card">
+                                <div className="card-label">Research Plan</div>
+                                <div className="searches">{plan.searches.map((s, i) => <span key={i} className="search-tag">{s}</span>)}</div>
+                            </div>)}
+
+                            {/* ArXiv papers — always shown when available */}
+                            {papers.length > 0 && (<div className="card">
+                                <div className="card-label paper">📄 ArXiv Papers ({papers.length})</div>
+                                <div className="paper-list">{papers.map((p, i) => <PaperCard key={i} paper={p} />)}</div>
+                            </div>)}
+
+                            {/* Type-aware facts rendering */}
+                            {facts && queryType === "concept" && <ConceptResults facts={facts} />}
+                            {facts && queryType === "research" && <ResearchResults facts={facts} />}
+                            {facts && queryType === "market" && <MarketResults facts={facts} />}
+                            {facts && queryType === "mixed" && <><ConceptResults facts={facts} /><MarketResults facts={facts} /></>}
+
+                            {cacheStats && (<div className="cache-row">
+                                <span className="cache-badge">◆ {cacheStats.cached_queries} cached · {cacheStats.cache_size_kb}kb · {cacheStats.total_topics || 0} topics</span>
+                            </div>)}
+
+                            {report && (<div className="card">
+                                <div className="card-label">Full Report</div>
+                                <div className="report-content">{report}</div>
+                                <DownloadRow query={query} facts={factsRef.current} report={report} />
+                            </div>)}
+                        </>)}
+                    </div>)}
 
                     {activeTab === "dashboard" && <Dashboard runData={runData} />}
                 </div>
